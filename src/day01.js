@@ -34,7 +34,7 @@ function partOne(){
     console.log("Example 2 => " + calculateFrequency(example2));
     console.log("Example 3 => " + calculateFrequency(example3));
     console.log("Example 4 => " + calculateFrequency(example4));
-    console.log("Puzzle input => " + calculateFrequency(frequencyChanges));
+    console.log("Puzzle solution => " + calculateFrequency(frequencyChanges));
 }
 
 function partTwo(){
@@ -51,7 +51,7 @@ function partTwo(){
     console.log("Example 3 => " + getRepeatedFrequency(example3));
     console.log("Example 4 => " + getRepeatedFrequency(example4));
     console.log("Example 5 => " + getRepeatedFrequency(example5));
-    console.log("Puzzle input => " + getRepeatedFrequency(frequencyChanges));
+    console.log("Puzzle solution => " + getRepeatedFrequency(frequencyChanges));
 }
 
 function day01(){
