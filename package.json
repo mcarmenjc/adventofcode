@@ -4,6 +4,7 @@
   "description": "Advent of code 2018",
   "main": "index.js",
   "scripts": {
+    "test": "./node_modules/.bin/mocha --compilers js:@babel/register",
     "start": "nodemon --exec babel-node src/index.js",
     "build": "babel src --out-dir dist",
     "serve": "node dist/index.js"
@@ -23,6 +24,9 @@
     "@babel/core": "^7.2.0",
     "@babel/node": "^7.2.0",
     "@babel/preset-env": "^7.2.0",
+    "@babel/register": "^7.0.0",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
     "nodemon": "^1.18.7"
   }
 }

@@ -10,5 +10,5 @@ function header(){
 }
 
 header();
-//day01();
+day01();
 day02();
