@@ -55,7 +55,6 @@ describe('Day 01', () => {
 
         it('example 4', () => {
             let example4 = [-6, 3, 8, 5, -6];
-    let example5 = [7, 7, -2, -7, -4];
             let frequency = getRepeatedFrequency(example4);
             let expectedFrequency = 5;
             assert.strictEqual(expectedFrequency, frequency, 'calculated frequency does not match');

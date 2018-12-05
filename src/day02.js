@@ -91,4 +91,4 @@ function day02(){
     partTwo(labelsList);
 }
 
-export { day02 };
+export { day02, calculateChecksum, findLabelsForSantaSuit };
