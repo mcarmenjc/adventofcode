@@ -3,7 +3,7 @@ import {calculateChecksum, findLabelsForSantaSuit} from '../src/day02'
 
 describe('Day 02', () => {
     describe('Part 1', () => {
-        it('example 1', () => {
+        it('example => [abcdef, bababc, abbcde, abcccd, aabcdd, abcdee, ababab], checksum => 12', () => {
             let example1 = ['abcdef', 'bababc', 'abbcde', 'abcccd', 'aabcdd', 'abcdee', 'ababab'];
             let checksum = calculateChecksum(example1);
             let expectedChecksum = 12;
@@ -11,7 +11,7 @@ describe('Day 02', () => {
         });
     });
     describe('Part 2', () => {
-        it('example 1', () => {
+        it('example => [abcde, fghij, klmno, pqrst, fguij, axcye, wvxyz], label => fgij', () => {
             let example1 = ['abcde', 'fghij', 'klmno', 'pqrst', 'fguij', 'axcye', 'wvxyz'];
             let commonCharacters = findLabelsForSantaSuit(example1);
             let expectedCommonCharacters = 'fgij';
