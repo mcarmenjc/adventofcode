@@ -4,7 +4,7 @@
   "description": "Advent of code 2018",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --compilers js:@babel/register",
+    "test": "nodemon --exec ./node_modules/.bin/mocha --compilers js:@babel/register || true",
     "start": "nodemon --exec babel-node src/index.js",
     "build": "babel src --out-dir dist",
     "serve": "node dist/index.js"

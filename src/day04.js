@@ -131,17 +131,12 @@ function calculateStrategy2(events){
     let mostSleptMinute = 0;
 
     for (let guard in guardsSleeping){
-        console.log("guard => " + guard);
         let guardMostSleptMin = getMaxInMinArray(guardsSleeping[guard]);
-        console.log("most slept minute => " + guardMostSleptMin);
-        if (guardid === undefined || (mostSleptMinute <= guardMostSleptMin)){
+        if (guardid === undefined || (guardsSleeping[guardid][mostSleptMinute] < guardsSleeping[guard][guardMostSleptMin])){
             guardid = guard;
             mostSleptMinute = guardMostSleptMin;
         }
     }
-
-    console.log("guard => " + guardid);
-    console.log("most slept minute => " + mostSleptMinute);
 
     return parseInt(guardid)*mostSleptMinute;
 }
@@ -160,7 +155,7 @@ function day04(){
     console.log("--- Day 4: Repose Record ---");
     let events = readLog(); 
     partOne(events);
-    partTwo(events);
+    partTwo(events); 
     console.log('\n\n');
 }
 
@@ -178,9 +173,6 @@ function readLog(){
     });
     events.sort(function(a, b) {
         return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
-    });
-    events.forEach(e => {
-        console.log(e.date + ' -- ' + e.event);
     });
     return events;
 }
