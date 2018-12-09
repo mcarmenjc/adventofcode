@@ -50,6 +50,43 @@ let Step = class {
     }
 }
 
+let Worker = class {
+    constructor(){
+        this.step = undefined;
+        this.workingTime = 0;
+    }
+
+    work(){
+        this.workingTime --;
+    }
+
+    setTask(step){
+        this.step = step;
+    }
+
+    calculateWorkingTime(taskBaseTime){
+        this.workingTime = taskBaseTime + (this.step.id.charCodeAt(0) - 'A'.charCodeAt(0) + 1);
+    }
+
+    isWorking(){
+        return this.step !== undefined;
+    }
+
+    hasFinished(){
+        return this.workingTime === 0;
+    }
+
+    finishTask(){
+        this.step.execute();
+        this.step = undefined;
+        this.workingTime = 0;
+    }
+
+    print(){
+        console.log('Worker is working on task ' + this.step.id + ' for ' + this.workingTime + 's');
+    }
+}
+
 function partOne(start){
     console.log('You find yourself standing on a snow-covered coastline; apparently, you landed a little off course. The region is too hilly to see the North Pole from here, but you do spot some Elves that seem to be trying to unpack something that washed ashore. It\'s quite cold out, so you decide to risk creating a paradox by asking them for directions.');
     console.log('"Oh, are you the search party?" Somehow, you can understand whatever Elves from the year 1018 speak; you assume it\'s Ancient Nordic Elvish. Could the device on your wrist also be a translator? "Those clothes don\'t look very warm; take this." They hand you a heavy coat.');
@@ -109,46 +146,95 @@ function calculateStepOrder(start){
 }
 
 
-function partTwo(points){
+function partTwo(start){
+    let workers = 5;
+    let taskTime = 60;
     console.log('--- Part Two ---');
-    console.log('On the other hand, if the coordinates are safe, maybe the best you can do is try to find a region near as many coordinates as possible.');
-    console.log('For example, suppose you want the sum of the Manhattan distance to all of the coordinates to be less than 32. For each location, add up the distances to all of the given coordinates; if the total of those distances is less than 32, that location is within the desired region. Using the same coordinates as above, the resulting region looks like this:');
-    console.log('..........');
-    console.log('.A........');
-    console.log('..........');
-    console.log('...###..C.');
-    console.log('..#D###...');
-    console.log('..###E#...');
-    console.log('.B.###....');
-    console.log('..........');
-    console.log('..........');
-    console.log('........F.');
-    console.log('In particular, consider the highlighted location 4,3 located at the top middle of the region. Its calculation is as follows, where abs() is the absolute value function:');
-    console.log('Distance to coordinate A: abs(4-1) + abs(3-1) =  5');
-    console.log('Distance to coordinate B: abs(4-1) + abs(3-6) =  6');
-    console.log('Distance to coordinate C: abs(4-8) + abs(3-3) =  4');
-    console.log('Distance to coordinate D: abs(4-3) + abs(3-4) =  2');
-    console.log('Distance to coordinate E: abs(4-5) + abs(3-5) =  3');
-    console.log('Distance to coordinate F: abs(4-8) + abs(3-9) = 10');
-    console.log('Total distance: 5 + 6 + 4 + 2 + 3 + 10 = 30');
-    console.log('Because the total distance to all coordinates (30) is less than 32, the location is within the region.');
-    console.log('This region, which also includes coordinates D and E, has a total size of 16.');
-    console.log('Your actual region will need to be much larger than this example, though, instead including all locations with a total distance of less than 10000.');
-    console.log('What is the size of the region containing all locations which have a total distance to all given coordinates of less than 10000?');
+    console.log('As you\'re about to begin construction, four of the Elves offer to help. "The sun will set soon; it\'ll go faster if we work together." Now, you need to account for multiple people working on steps simultaneously. If multiple steps are available, workers should still begin them in alphabetical order.');
+    console.log('Each step takes 60 seconds plus an amount corresponding to its letter: A=1, B=2, C=3, and so on. So, step A takes 60+1=61 seconds, while step Z takes 60+26=86 seconds. No time is required between steps.');
+    console.log('To simplify things for the example, however, suppose you only have help from one Elf (a total of two workers) and that each step takes 60 fewer seconds (so that step A takes 1 second and step Z takes 26 seconds). Then, using the same instructions as above, this is how each second would be spent:');
+    console.log('Second   Worker 1   Worker 2   Done');
+    console.log('   0        C          .        ');
+    console.log('   1        C          .        ');
+    console.log('   2        C          .        ');
+    console.log('   3        A          F       C');
+    console.log('   4        B          F       CA');
+    console.log('   5        B          F       CA');
+    console.log('   6        D          F       CAB');
+    console.log('   7        D          F       CAB');
+    console.log('   8        D          F       CAB');
+    console.log('   9        D          .       CABF');
+    console.log('  10        E          .       CABFD');
+    console.log('  11        E          .       CABFD');
+    console.log('  12        E          .       CABFD');
+    console.log('  13        E          .       CABFD');
+    console.log('  14        E          .       CABFD');
+    console.log('  15        .          .       CABFDE');
+    console.log('Each row represents one second of time. The Second column identifies how many seconds have passed as of the beginning of that second. Each worker column shows the step that worker is currently doing (or . if they are idle). The Done column shows completed steps.');
+    console.log('Note that the order of the steps has changed; this is because steps now take time to finish and multiple workers can begin multiple steps simultaneously.');
+    console.log('In this example, it would take 15 seconds for two workers to complete these steps.');
+    console.log('With 5 workers and the 60+ second step durations described above, how long will it take to complete all of the steps?');
     console.log('-----------------------------------');
-    console.log("Your puzzle answer was  " + calculateLongestRegionWithInDistance(points, 10000));
+    console.log("Your puzzle answer was  " + calculateTimeSpentToCompleteAllSteps(start, workers, taskTime));
     console.log('-----------------------------------');
 }
 
-function calculateLongestRegionWithInDistance(points, maxDistance){
-    return 0;
+function calculateTimeSpentToCompleteAllSteps(start, numWorkers, taskTime){ 
+    let workers = new Array(numWorkers);
+    for(let i = 0; i < numWorkers; i++){
+        workers[i] = new Worker();
+    }
+    let time = 0;
+    let stepsToExecute = [];
+
+    start.forEach(step => {
+        stepsToExecute.push(step);
+    });
+
+    let inProgress = false;
+
+    while(stepsToExecute.length > 0 || inProgress){
+        time ++;
+        stepsToExecute.sort(function(a, b) {
+            return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+        });
+
+        workers.forEach(w => {
+            if(!w.isWorking() && stepsToExecute.length > 0){
+                let step = stepsToExecute.shift();
+                w.setTask(step);
+                w.calculateWorkingTime(taskTime);
+            }
+        });
+
+        inProgress = false;
+        workers.forEach(w => {
+            if(w.isWorking()){
+                w.work();
+                if(w.hasFinished()){
+                    let step = w.step;
+                    w.finishTask();
+                    step.children.forEach(c => {
+                        if (c.canBeExecuted()){
+                            stepsToExecute.push(c);
+                        }
+                    });
+                }
+            }
+            if(w.isWorking()){
+                inProgress = true;
+            }
+        });
+    }
+    return time;
 }
 
 function day07(){
     console.log("--- Day 7: The Sum of Its Parts ---");
     let start = readInstructions();
     partOne(start);
-    //partTwo(points); 
+    let start2 = readInstructions();
+    partTwo(start2); 
     console.log('\n\n');
 }
 
@@ -182,4 +268,4 @@ function readInstructions(){
     return initialInstructions;
 }
 
-export { day07, Step, calculateStepOrder };
+export { day07, Step, calculateStepOrder, calculateTimeSpentToCompleteAllSteps, Worker };

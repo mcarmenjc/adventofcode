@@ -1,9 +1,10 @@
 import {expect}  from 'chai';
-import { Step, calculateStepOrder } from '../src/day07';
+import { Step, calculateStepOrder, calculateTimeSpentToCompleteAllSteps, Worker } from '../src/day07';
+
 
 describe('Day 07', () => {
     let initialStep;
-    before(() => {
+    beforeEach(() => {
         initialStep = new Step('C');
         let step1 = new Step('A');
         step1.addParent(initialStep);
@@ -47,6 +48,71 @@ describe('Day 07', () => {
             initialStep.executed = false;
         });
     });
+
+    describe('Worker', () => {
+        it('should have no task assigned at creation', () => {
+            let worker = new Worker();
+            expect(worker.step).to.be.undefined;
+            expect(worker.workingTime).to.equal(0);
+        });
+        it('should not be working when no task is assigned', () => {
+            let worker = new Worker();
+            expect(worker.step).to.be.undefined;
+            expect(worker.isWorking()).to.be.false;
+        });
+        it('should have a defined task after assignation', () => {
+            let worker = new Worker();
+            worker.setTask(new Step('B'));
+            expect(worker.step).to.not.to.be.undefined;
+        });
+        it('should have working time after a task is assigned', () => {
+            let expectedWorkingTime = 'B'.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+            let worker = new Worker();
+            worker.setTask(new Step('B'));
+            worker.calculateWorkingTime(0);
+            expect(worker.workingTime).to.equal(expectedWorkingTime);
+        });
+        it('should be working when a task is assigned', () => {
+            let worker = new Worker();
+            worker.setTask(new Step('B'));
+            worker.calculateWorkingTime(0);
+            expect(worker.isWorking()).to.be.true;
+        });
+        it('should decrease time when working on task', () => {
+            let expectedWorkingTime = 'B'.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+            let worker = new Worker();
+            worker.setTask(new Step('B'));
+            worker.calculateWorkingTime(0);
+            expect(worker.workingTime).to.equal(expectedWorkingTime);
+            worker.work();
+            expect(worker.workingTime).to.equal(expectedWorkingTime-1);
+        });
+        it('should has finished task when time remaining is 0', () => {
+            let expectedWorkingTime = 'B'.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+            let worker = new Worker();
+            worker.setTask(new Step('B'));
+            worker.calculateWorkingTime(0);
+            expect(worker.workingTime).to.equal(expectedWorkingTime);
+            expect(worker.hasFinished()).to.be.false;
+            worker.work();
+            expect(worker.workingTime).to.equal(expectedWorkingTime-1);
+            expect(worker.hasFinished()).to.be.false;
+            worker.work();
+            expect(worker.workingTime).to.equal(expectedWorkingTime-2);
+            expect(worker.hasFinished()).to.be.true;
+        });
+        it('should has no task when he finishes', () => {
+            let worker = new Worker();
+            worker.setTask(new Step('B'));
+            worker.calculateWorkingTime(0);
+            expect(worker.step).not.to.be.undefined;
+            expect(worker.workingTime).to.be.greaterThan(0);
+            worker.finishTask();
+            expect(worker.step).to.be.undefined;
+            expect(worker.workingTime).to.equal(0);
+        });
+    });
+
     describe('Part 1', () => {
         it('should get the correct oreder of execution of the step for the sleigh', () => {
             let expectedOrder = 'CABDFE';
@@ -56,7 +122,13 @@ describe('Day 07', () => {
         });
     });
     describe('Part 2', () => {
-        it('should get the area within a max distance of 32', () => {
+        it('should execute all steps in 15s with 2 workers', () => {
+            let numWorkers = 2;
+            let taskTime = 0;
+            let expectedTime = 15;
+            let time = calculateTimeSpentToCompleteAllSteps([initialStep], numWorkers, taskTime);
+            
+            expect(time).to.equal(expectedTime);
         });
     });
 });
