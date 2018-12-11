@@ -275,10 +275,6 @@ function partTwo(stars){
     console.log('-----------------------------------');
 }
 
-function calculateTimeSpentToCompleteAllSteps(start, numWorkers, taskTime){ 
-    return 0;
-}
-
 function day10(){
     console.log("--- Day 10: The Stars Align ---");
     let stars = readPoints();

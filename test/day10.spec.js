@@ -106,12 +106,4 @@ describe('Day 10', () => {
             expect(secondsMoving).to.equal(expectedSeconds);
         });
     });
-    describe('Part 1', () => {
-        it('should add all the metadata values for all nodes', () => {
-        });
-    });
-    describe('Part 2', () => {
-        it('should calculate the value of the root node', () => {
-        });
-    });
 });
