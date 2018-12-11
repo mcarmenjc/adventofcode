@@ -69,6 +69,13 @@ function partOne(gridSerialNumber){
     console.log('-----------------------------------');
 }
 
+function findLargestTotalPowerFor3SizeSquares(gridSerialNumber){
+    let grid = fillPowerGrid(gridSerialNumber);
+    let sumTable = calculateSumTable(grid);
+    let coords = findRegionWithLargestTotalPowerForSquareSize(sumTable, 3);
+    return coords.x + ',' + coords.y
+}
+
 function fillPowerGrid(gridSerialNumber){
     let size = 300;
     let grid = new Array(size);
@@ -89,18 +96,31 @@ function calculatePowerForCell(x, y, gridSerialNumber){
     return powerLevel;
 }
 
-function findRegionWithLargestTotalPowerForSquareSize(powerGrid, squareSize){
-    let maxPowerGrid = 0;
+function findRegionWithLargestTotalPowerForSquareSize(sumTable, squareSize){
+    let maxPower = 0;
     let x = 0;
     let y = 0;
 
-    for (let i = 0; i <= powerGrid.length - squareSize; i++){
-        for (let j = 0; j <= powerGrid[i].length - squareSize; j++){
-            let sum = calculateSumPower(powerGrid, i, j, squareSize);
-            if (sum > maxPowerGrid){
-                maxPowerGrid = sum;
-                x = i+1;
-                y = j+1;
+    for (let i = 0; i < sumTable.length; i++){
+        for (let j = 0; j < sumTable[i].length ; j++){
+            let power = 0;
+            if (i + squareSize - 1 < sumTable.length && j + squareSize - 1 < sumTable[i].length){
+                power += sumTable[i+squareSize-1][j+squareSize-1];
+                if (i - 1 >= 0){
+                    power -= sumTable[i-1][j+squareSize-1];
+                }
+                if(j - 1 >= 0){
+                    power -= sumTable[i+squareSize-1][j-1];
+                }
+                if(i - 1 >= 0 && j - 1 >= 0){
+                    power += sumTable[i-1][j-1];
+                }
+            }
+
+            if(power > maxPower){
+                maxPower = power;
+                x = i + 1;
+                y = j + 1;
             }
         }
     }
@@ -108,26 +128,30 @@ function findRegionWithLargestTotalPowerForSquareSize(powerGrid, squareSize){
     return {
         'x': x, 
         'y': y,
-        'power' : maxPowerGrid};
+        'power' : maxPower};
 }
 
-function findLargestTotalPowerFor3SizeSquares(gridSerialNumber){
-    let grid = fillPowerGrid(gridSerialNumber);
-    let coords = findRegionWithLargestTotalPowerForSquareSize(grid, 3);
-    return coords.x + ',' + coords.y
-}
-
-function calculateSumPower(powerGrid, row, col, squareSize){
-    let sum = 0;
-    for (let i = 0; i < squareSize; i++){
-        for(let j = 0; j < squareSize; j++){
-            sum += powerGrid[i+row][j+col];
+function calculateSumTable(grid){
+    let sumTable = new Array(grid.length);
+    for(let i = 0; i < grid.length; i++){
+        sumTable[i] = new Array(grid[i].length);
+        for(let j = 0; j < grid[i].length; j++){
+            sumTable[i][j] = grid[i][j];
+            if(i-1 >= 0){
+                sumTable[i][j] += sumTable[i-1][j];
+            }
+            if(j-1 >= 0){
+                sumTable[i][j] += sumTable[i][j-1];
+            }
+            if(i-1 >= 0 && j-1 >= 0){
+                sumTable[i][j] -= sumTable[i-1][j-1];
+            }
         }
     }
-    return sum;
+    return sumTable;
 }
 
-function partTwo(stars){
+function partTwo(gridSerialNumber){
     console.log('--- Part Two ---');
     console.log('You discover a dial on the side of the device; it seems to let you select a square of any size, not just 3x3. Sizes from 1x1 to 300x300 are supported.');
     console.log('Realizing this, you now must find the square of any size with the largest total power. Identify this square by including its size as a third parameter after the top-left coordinate: a 9x9 square with a top-left corner of 3,5 is identified as 3,5,9.');
@@ -136,47 +160,31 @@ function partTwo(stars){
     console.log('For grid serial number 42, the largest total square (with a total power of 119) is 12x12 and has a top-left corner of 232,251, so its identifier is 232,251,12.');
     console.log('What is the X,Y,size identifier of the square with the largest total power?');
     console.log('-----------------------------------');
-    console.log("Your puzzle answer was  " );
+    console.log("Your puzzle answer was  " + findRegionWithLargestTotalPower(gridSerialNumber));
     console.log('-----------------------------------');
 }
 
 function findRegionWithLargestTotalPower(gridSerialNumber){
     let grid = fillPowerGrid(gridSerialNumber);
-    let preComputedPower = {};
-
-    for (let i = 0; i < grid.length; i++){
-        for (let j = 0; j < grid[i].length; j++){
-            for (let k = 0; k < grid.length; k++){
-                let current = (i+1) + ',' + (j+1) + ',' + (k+1);
-                if (k === 0){
-                    preComputedPower[current] = grid[i][j];
-                }
-                else{
-                    if(j + k < grid.length && i + k < grid.length){
-                        let previous = (i+1) + ',' + (j+1) + ',' + (k+1);
-                        preComputedPower[current] = preComputedPower[previous];
-                        for (let l = i; l < i+k+1; l++){
-                            preComputedPower[current] += grid[l][j+k];
-                        }
-                        for (let l = j; l < j+k+1; l++){
-                            preComputedPower[current] += grid[i+k][l];
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+    let sumTable = calculateSumTable(grid);
+    let x;
+    let y;
+    let size = 0;
     let maxPower = 0;
-    let solutionMax = '';
-    for(let solution in preComputedPower){
-        if(maxPower < preComputedPower[solution]){
-            maxPower = preComputedPower[solution];
-            solutionMax = solution;
+
+    for (let k = 1; k <= grid.length; k++){
+        let region = findRegionWithLargestTotalPowerForSquareSize(sumTable, k)
+
+        if(region.power > maxPower){
+            maxPower = region.power;
+            x = region.x;
+            y = region.y;
+            size = k;
         }
+    
     }
 
-    return solutionMax;
+    return x + ',' + y + ',' + size;
 }
 
 function day11(){
@@ -187,4 +195,4 @@ function day11(){
     console.log('\n\n');
 }
 
-export { day11, fillPowerGrid, findRegionWithLargestTotalPowerForSquareSize, calculatePowerForCell, findRegionWithLargestTotalPower };
+export { day11, fillPowerGrid, findRegionWithLargestTotalPowerForSquareSize, calculatePowerForCell, findRegionWithLargestTotalPower, calculateSumTable };

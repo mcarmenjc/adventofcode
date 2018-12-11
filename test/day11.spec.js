@@ -1,5 +1,5 @@
 import {expect}  from 'chai';
-import { calculatePowerForCell, fillPowerGrid, findRegionWithLargestTotalPowerForSquareSize, findRegionWithLargestTotalPower } from '../src/day11';
+import { calculatePowerForCell, fillPowerGrid, findRegionWithLargestTotalPowerForSquareSize, findRegionWithLargestTotalPower, calculateSumTable } from '../src/day11';
 
 describe('Day 11', () => {
     describe('Power Grid', () => {
@@ -48,7 +48,8 @@ describe('Day 11', () => {
         it('should find max power at square starting at 33,45 with serial number 18', () => {
             let gridSerialNumber = 18;
             let grid = fillPowerGrid(gridSerialNumber)
-            let coords = findRegionWithLargestTotalPowerForSquareSize(grid, 3);
+            let sumTable = calculateSumTable(grid);
+            let coords = findRegionWithLargestTotalPowerForSquareSize(sumTable, 3);
             let expectedCoords = {'x': 33, 'y': 45};
 
             expect(coords.x).to.equal(expectedCoords.x);
@@ -58,7 +59,8 @@ describe('Day 11', () => {
         it('should find max power at square starting at 21,61 with serial number 42', () => {
             let gridSerialNumber = 42;
             let grid = fillPowerGrid(gridSerialNumber)
-            let coords = findRegionWithLargestTotalPowerForSquareSize(grid, 3);
+            let sumTable = calculateSumTable(grid);
+            let coords = findRegionWithLargestTotalPowerForSquareSize(sumTable, 3);
             let expectedCoords = {'x': 21, 'y': 61};
 
             expect(coords.x).to.equal(expectedCoords.x);
