@@ -11,6 +11,7 @@ import { day08 } from './day08';
 import { day09 } from './day09';
 import { day10 } from './day10';
 import { day11 } from './day11';
+import { day12 } from './day12';
 
 function header(){
     console.log("-------------------------------------------------");
@@ -29,4 +30,5 @@ header();
 //day08();
 //day09();
 //day10();
-day11();
+//day11();
+day12();
