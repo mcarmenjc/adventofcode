@@ -381,6 +381,13 @@ function moveUntilOneCartIsLeft(track, carts){
     return carts[0];
 }
 
+/*
+for example, output should be
+83,49 for part1
+
+73,36 for part2
+ */
+
 function day13(){
     console.log("--- Day 13: Mine Cart Madness ---");
     let {track, carts} = readTracksAndCarts();
