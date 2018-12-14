@@ -13,6 +13,7 @@ import { day10 } from './day10';
 import { day11 } from './day11';
 import { day12 } from './day12';
 import { day13 } from './day13';
+import { day14 } from './day14';
 
 function header(){
     console.log("-------------------------------------------------");
@@ -33,4 +34,5 @@ header();
 //day10();
 //day11();
 //day12();
-day13();
+//day13();
+day14();
