@@ -250,12 +250,10 @@ describe('Day 13', () => {
             otherCarts.push(new Cart(6, 3, 'left'));
             otherCarts.push(new Cart(6, 5, 'right'));
 
-            moveUntilOneCartIsLeft(otherTrack, otherCarts);
-            otherCarts[0].print();
+            let remainingCart = moveUntilOneCartIsLeft(otherTrack, otherCarts);
             let lastCart = [6, 4];
-            expect(otherCarts.length).to.equal(1);
-            expect(otherCarts[0].column).to.equal(lastCart[0]);
-            expect(otherCarts[0].row).to.equal(lastCart[1]);
+            expect(remainingCart.column).to.equal(lastCart[0]);
+            expect(remainingCart.row).to.equal(lastCart[1]);
         });
     });
 });

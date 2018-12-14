@@ -16,6 +16,7 @@ let Cart = class {
         this.column = column;
         this.direction = direction;
         this.lastIntersectionMove = -1;
+        this.hasCrashed = false;
     }
 
     move(){
@@ -277,27 +278,28 @@ function partOne(track, carts){
 }
 
 function moveCartsUntilCrash(track, carts){
-    let crash = findCrash(carts);
-    let i = 0;
-    while(crash === undefined){
-        moveCart(track, carts[i]);
-        i++;
-        if (i === carts.length){
-            carts.sort((a, b) => {
-                if(a.row < b.row){
-                    return -1;
-                }
-                if(a.row === b.row){
-                    return a.column < b.column ? -1 : a.column > b.column ? 1 : 0;
-                }
-                return 1;
-            });
-            i = 0;
+    while(true){
+        sortCarts(carts);
+        for (let i = 0; i < carts.length; i++){
+            moveCart(track, carts[i]);
+            let crash = findCrash(carts, i);
+            if(crash !== -1){
+                return [i, crash];
+            }
         }
-        crash = findCrash(carts);
     }
+}
 
-    return crash;
+function sortCarts(carts){
+    carts.sort((a, b) => {
+        if(a.row < b.row){
+            return -1;
+        }
+        if(a.row === b.row){
+            return a.column < b.column ? -1 : a.column > b.column ? 1 : 0;
+        }
+        return 1;
+    });
 }
 
 function moveCart(track, cart){
@@ -310,15 +312,13 @@ function moveCart(track, cart){
     }
 }
 
-function findCrash(carts){
-    for (let i = 0; i < carts.length - 1; i++){
-        for(let j = i+1; j< carts.length; j++){
-            if(carts[i].column === carts[j].column && carts[i].row === carts[j].row){
-                return [i, j];
-            }
+function findCrash(carts, currentCart){
+    for (let i = 0; i < carts.length; i++){
+        if(i !== currentCart && carts[currentCart].column === carts[i].column && carts[currentCart].row === carts[i].row){
+                return i;
         }
     }
-    return undefined;    
+    return -1;
 }
 
 
@@ -358,29 +358,40 @@ function partTwo(track, carts){
     console.log('After four very expensive crashes, a tick ends with only one cart remaining; its final location is 6,4.');
     console.log('What is the location of the last cart at the end of the first tick where it is the only cart left?');
     console.log('-----------------------------------');
-    moveUntilOneCartIsLeft(track, carts)
-    console.log('Your puzzle answer was  ' + carts[0].column + ',' + carts[0].row);
+    let remainingCart = moveUntilOneCartIsLeft(track, carts)
+    console.log('Your puzzle answer was  ' + remainingCart.column + ',' + remainingCart.row);
     console.log('-----------------------------------');
 }
 
 function moveUntilOneCartIsLeft(track, carts){
     while(carts.length > 1){
-        let crash = moveCartsUntilCrash(track, carts);
-        carts.splice(crash[0], 1);
-        carts.splice(crash[1], 1);
+        sortCarts(carts);
+        for (let i = 0; i < carts.length; i++){
+            if(!carts[i].hasCrashed){
+                moveCart(track, carts[i]);
+                let crash = findCrash(carts, i);
+                if(crash !== -1){
+                    carts[i].hasCrashed = true;
+                    carts[crash].hasCrashed = true;
+                }
+            }
+        }
+        carts = carts.filter(c => c.hasCrashed === false);
     }
+    return carts[0];
 }
 
 function day13(){
     console.log("--- Day 13: Mine Cart Madness ---");
     let {track, carts} = readTracksAndCarts();
+    let initialCarts = carts.slice();
     partOne(track, carts);
-    partTwo(track, carts);
+    partTwo(track, initialCarts); 
     console.log('\n\n');
 }
 
 function readTracksAndCarts(){
-    let fileContent = readFileSync('resources/day13_input.txt', 'utf8');
+    let fileContent = readFileSync('resources/day13_other_input.txt', 'utf8');
     let carts = [];
     let tracks = [];
     fileContent.split('\n').forEach(line => {
