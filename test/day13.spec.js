@@ -3,37 +3,73 @@ import { Cart, moveCart, moveCartsUntilCrash, moveUntilOneCartIsLeft } from '../
 
 describe('Day 13', () => {
     describe('Cart', () => {
+        let track;
+        let carts;
         let cart;
+        before(() => {
+            track = [];
+            track.push('/---\\        '.split(''));
+            track.push('|   |  /----\\'.split(''));
+            track.push('| /-+--+-\\  |'.split(''));
+            track.push('| | |  | |  |'.split(''));
+            track.push('\\-+-/  \\-+--/'.split(''));
+            track.push('  \\------/   '.split(''));
+
+            carts = [];
+            carts.push(new Cart(0, 2, 'right'));
+            carts.push(new Cart(3, 9, 'down'));
+        });
         beforeEach(() => {
+            carts[0].row = 0;
+            carts[0].column = 2;
+            carts[0].direction = 'right';
+            carts[0].lastIntersectionMove = -1;
+            carts[1].row = 3;
+            carts[1].column = 9;
+            carts[1].direction = 'down';
+            carts[1].lastIntersectionMove = -1;
             cart = new Cart(5,5, 'left');
         });
-        it('should move correctly to the left', () => {
-            cart.direction = 'left';
-            let expectedCartPostion = [5, 4];
-            cart.move();
-            expect(cart.row).to.equal(expectedCartPostion[0]);
-            expect(cart.column).to.equal(expectedCartPostion[1]);
+        it('should move depending on their direction', () => {
+            carts[0].move(track);
+            carts[1].move(track);
+            let expectedPosForCart1 = [0, 3];
+            let expectedPosForCart2 = [4, 9];
+            expect(carts[0].row).to.equal(expectedPosForCart1[0]);
+            expect(carts[0].column).to.equal(expectedPosForCart1[1]);
+            expect(carts[1].row).to.equal(expectedPosForCart2[0]);
+            expect(carts[1].column).to.equal(expectedPosForCart2[1]);
         });
-        it('should move correctly to the right', () => {
-            cart.direction = 'right';
-            let expectedCartPostion = [5, 6];
-            cart.move();
-            expect(cart.row).to.equal(expectedCartPostion[0]);
-            expect(cart.column).to.equal(expectedCartPostion[1]);
+        it('should keep their direction if no corner or intersection', () => {
+            carts[0].move(track);
+            let expectedDirectionForCart1 = 'right';
+            expect(carts[0].direction).to.equal(expectedDirectionForCart1);
         });
-        it('should move correctly up', () => {
-            cart.direction = 'up';
-            let expectedCartPostion = [4, 5];
-            cart.move();
-            expect(cart.row).to.equal(expectedCartPostion[0]);
-            expect(cart.column).to.equal(expectedCartPostion[1]);
+        it('should change direction on corners', () => {
+            carts[0].move(track);
+            carts[0].move(track);
+            let expectedDirectionForCart1 = 'down';
+            expect(carts[0].direction).to.equal(expectedDirectionForCart1);
         });
-        it('should move correctly down', () => {
-            cart.direction = 'down';
-            let expectedCartPostion = [6, 5];
-            cart.move();
-            expect(cart.row).to.equal(expectedCartPostion[0]);
-            expect(cart.column).to.equal(expectedCartPostion[1]);
+        it('should change direction on intersection if next move is left', () => {
+            carts[1].move(track);
+            let expectedDirectionForCart2 = 'right';
+            expect(carts[1].direction).to.equal(expectedDirectionForCart2);
+        });
+        it('should keep direction on intersection if next move is straight', () => {
+            for (let i =0; i < 6;i++){
+                carts[0].move(track);
+            }
+            let expectedDirectionForCart1 = carts[0].direction;
+            carts[0].move(track);
+            expect(carts[0].direction).to.equal(expectedDirectionForCart1);
+        });
+        it('should keep direction on intersection if next move is straight', () => {
+            for (let i =0; i < 11;i++){
+                carts[0].move(track);
+            }
+            let expectedDirectionForCart1 = 'left';
+            expect(carts[0].direction).to.equal(expectedDirectionForCart1);
         });
         it('should confirm it has to turn in a \\ corner', () => {
             expect(cart.shouldChangeDirection('\\')).to.be.true;
@@ -157,10 +193,8 @@ describe('Day 13', () => {
         });
     });
     describe('Carts in a track', () => {
-        let track;
-        let carts;
-        before(() => {
-            track = [];
+        it('should be moving until a crash happens', () => {
+            let track = [];
             track.push('/---\\        '.split(''));
             track.push('|   |  /----\\'.split(''));
             track.push('| /-+--+-\\  |'.split(''));
@@ -168,62 +202,9 @@ describe('Day 13', () => {
             track.push('\\-+-/  \\-+--/'.split(''));
             track.push('  \\------/   '.split(''));
 
-            carts = [];
+            let carts = [];
             carts.push(new Cart(0, 2, 'right'));
             carts.push(new Cart(3, 9, 'down'));
-        });
-        beforeEach(() => {
-            carts[0].row = 0;
-            carts[0].column = 2;
-            carts[0].direction = 'right';
-            carts[0].lastIntersectionMove = -1;
-            carts[1].row = 3;
-            carts[1].column = 9;
-            carts[1].direction = 'down';
-            carts[1].lastIntersectionMove = -1;
-        });
-        it('should move depending on their direction', () => {
-            moveCart(track, carts[0]);
-            moveCart(track, carts[1]);
-            let expectedPosForCart1 = [0, 3];
-            let expectedPosForCart2 = [4, 9];
-            expect(carts[0].row).to.equal(expectedPosForCart1[0]);
-            expect(carts[0].column).to.equal(expectedPosForCart1[1]);
-            expect(carts[1].row).to.equal(expectedPosForCart2[0]);
-            expect(carts[1].column).to.equal(expectedPosForCart2[1]);
-        });
-        it('should keep their direction if no corner or intersection', () => {
-            moveCart(track, carts[0]);
-            let expectedDirectionForCart1 = 'right';
-            expect(carts[0].direction).to.equal(expectedDirectionForCart1);
-        });
-        it('should change direction on corners', () => {
-            moveCart(track, carts[0]);
-            moveCart(track, carts[0]);
-            let expectedDirectionForCart1 = 'down';
-            expect(carts[0].direction).to.equal(expectedDirectionForCart1);
-        });
-        it('should change direction on intersection if next move is left', () => {
-            moveCart(track, carts[1]);
-            let expectedDirectionForCart2 = 'right';
-            expect(carts[1].direction).to.equal(expectedDirectionForCart2);
-        });
-        it('should keep direction on intersection if next move is straight', () => {
-            for (let i =0; i < 6;i++){
-                moveCart(track, carts[0]);
-            }
-            let expectedDirectionForCart1 = carts[0].direction;
-            moveCart(track, carts[0]);
-            expect(carts[0].direction).to.equal(expectedDirectionForCart1);
-        });
-        it('should keep direction on intersection if next move is straight', () => {
-            for (let i =0; i < 11;i++){
-                moveCart(track, carts[0]);
-            }
-            let expectedDirectionForCart1 = 'left';
-            expect(carts[0].direction).to.equal(expectedDirectionForCart1);
-        });
-        it('should be moving until a crash happens', () => {
             let crashPosition = moveCartsUntilCrash(track, carts);
             let expectedCrashPosition = [7, 3];
             expect(carts[crashPosition[0]].column).to.equal(expectedCrashPosition[0]);

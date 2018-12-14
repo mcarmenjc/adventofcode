@@ -19,9 +19,15 @@ let Cart = class {
         this.hasCrashed = false;
     }
 
-    move(){
+    move(track){
         this.row += DIRECTIONS[this.direction][0];
         this.column += DIRECTIONS[this.direction][1];
+        if(track[this.row][this.column] === '+'){
+            this.setNewDirectionAtIntersection();
+        }
+        if(this.shouldChangeDirection(track[this.row][this.column])){
+            this.changeDirection(track[this.row][this.column]);
+        }
     }
 
     shouldChangeDirection(currentPath){
@@ -32,7 +38,7 @@ let Cart = class {
         return false;
     }
 
-    changeDirection(currentPath){
+    changeDirection(currentPath){ 
         if (currentPath === '\\' || currentPath === '/'){
             this.turnCorner(currentPath);
         }
@@ -137,7 +143,7 @@ let Cart = class {
     }
 
     print(){
-        console.log('cart at (' + this.row + ', ' + this.column + ') with direction = ' + this.direction);
+        console.log('cart at (' + this.column + ', ' + this.row + ') direction (' + DIRECTIONS[this.direction][0] + ', ' + DIRECTIONS[this.direction][1] + ')');
     }
 }
 
@@ -281,7 +287,7 @@ function moveCartsUntilCrash(track, carts){
     while(true){
         sortCarts(carts);
         for (let i = 0; i < carts.length; i++){
-            moveCart(track, carts[i]);
+            carts[i].move(track);
             let crash = findCrash(carts, i);
             if(crash !== -1){
                 return [i, crash];
@@ -300,16 +306,6 @@ function sortCarts(carts){
         }
         return 1;
     });
-}
-
-function moveCart(track, cart){
-    cart.move();
-    if(track[cart.row][cart.column] === '+'){
-        cart.setNewDirectionAtIntersection();
-    }
-    if(cart.shouldChangeDirection(track[cart.row][cart.column])){
-        cart.changeDirection(track[cart.row][cart.column]);
-    }
 }
 
 function findCrash(carts, currentCart){
@@ -368,7 +364,7 @@ function moveUntilOneCartIsLeft(track, carts){
         sortCarts(carts);
         for (let i = 0; i < carts.length; i++){
             if(!carts[i].hasCrashed){
-                moveCart(track, carts[i]);
+                carts[i].move(track);
                 let crash = findCrash(carts, i);
                 if(crash !== -1){
                     carts[i].hasCrashed = true;
@@ -389,16 +385,21 @@ for example, output should be
  */
 
 function day13(){
-    console.log("--- Day 13: Mine Cart Madness ---");
+    console.log('--- Day 13: Mine Cart Madness ---');
     let {track, carts} = readTracksAndCarts();
-    let initialCarts = carts.slice();
-    partOne(track, carts);
-    partTwo(track, initialCarts); 
+    let partOneCarts = [];
+    let partTwoCarts = [];
+    carts.forEach(c => {
+        partOneCarts.push(new Cart(c.row, c.column, c.direction));
+        partTwoCarts.push(new Cart(c.row, c.column, c.direction));
+    });
+    partOne(track, partOneCarts);
+    partTwo(track, partTwoCarts); 
     console.log('\n\n');
 }
 
 function readTracksAndCarts(){
-    let fileContent = readFileSync('resources/day13_other_input.txt', 'utf8');
+    let fileContent = readFileSync('resources/day13_input.txt', 'utf8');
     let carts = [];
     let tracks = [];
     fileContent.split('\n').forEach(line => {
@@ -408,11 +409,11 @@ function readTracksAndCarts(){
     for (let i = 0; i < tracks.length; i++){
         for (let j = 0; j < tracks[i].length; j++){
             if (tracks[i][j] === '>'){
-                carts.push(new Cart(i, j, 'left'));
+                carts.push(new Cart(i, j, 'right'));
                 tracks[i][j] = '-';
             }
             if (tracks[i][j] === '<'){
-                carts.push(new Cart(i, j, 'right'));
+                carts.push(new Cart(i, j, 'left'));
                 tracks[i][j] = '-';
             }
             if (tracks[i][j] === '^'){
@@ -428,4 +429,4 @@ function readTracksAndCarts(){
     return {'track': tracks, 'carts': carts};
 }
 
-export { day13, Cart, moveCart, moveCartsUntilCrash, moveUntilOneCartIsLeft };
+export { day13, Cart, moveCartsUntilCrash, moveUntilOneCartIsLeft };
