@@ -32,34 +32,34 @@ function partOne(numRecipes){
     console.log('What are the scores of the ten recipes immediately after the number of recipes in your puzzle input?');
     console.log('Your puzzle input is 540391.');
     console.log('-----------------------------------');
-    console.log('Your puzzle answer was  ');
+    console.log('Your puzzle answer was  ' + getScoresOfRecipesTriedAfter(numRecipes, 10));
     console.log('-----------------------------------');
 }
 
 function getScoresOfRecipesTriedAfter(numRecipes, numExtraScores){
-    let scores = calculateScoresAfterTryingXRecipes(numRecipes);
-    
-    return last10Scores.join('');
+    let scores = calculateScoresAfterTryingXRecipes(numRecipes+numExtraScores);
+    for(let i = 0; i < scores.length - numRecipes - numExtraScores; i++){
+        scores.pop();
+    }
+    let lastExtraScores = scores.slice(scores.length - numExtraScores);
+    return lastExtraScores.join('');
 }
 
 function calculateScoresAfterTryingXRecipes(numRecipes){
-    let numRecipiesToTry = numRecipes;
     let recipesScores = [3, 7];
     let elvesCooking = [0, 1];
 
-    for (let i = 0; i < numRecipiesToTry; i++){
+    while (recipesScores.length < numRecipes){
         let newScores = tryRecipesAndGetNewScores(elvesCooking, recipesScores);
-        recipesScores = recipesScores.concat(newScores);
+        newScores.forEach(s => {
+            recipesScores.push(s);
+        });
         for(let i = 0; i < elvesCooking.length; i++){
             elvesCooking[i] = moveElf(elvesCooking[i], recipesScores[elvesCooking[i]], recipesScores.length);
         }
     }
 
-    return [elvesCooking, recipesScores];
-}
-
-function calculateExtraScores(numExtraScores, elvesCooking, recipesScores){
-
+    return recipesScores;
 }
 
 function tryRecipesAndGetNewScores(elvesCooking, recipesScores){
@@ -68,6 +68,11 @@ function tryRecipesAndGetNewScores(elvesCooking, recipesScores){
     elvesCooking.forEach(recipeId => {
         score += recipesScores[recipeId];
     });
+
+    if(score === 0){
+        scores.push(0);
+    }
+
     while (score > 0){
         scores.unshift(score % 10);
         score = Math.floor(score/10);
@@ -81,37 +86,66 @@ function moveElf(currentRecipe, currentScore, numRecipes){
     return nextRecipe;
 }
 
-function partTwo(track, carts){
-    
+function partTwo(scores){
+    console.log('--- Part Two ---');
+    console.log('As it turns out, you got the Elves\' plan backwards. They actually want to know how many recipes appear on the scoreboard to the left of the first recipes whose scores are the digits from your puzzle input.');
+    console.log('51589 first appears after 9 recipes.');
+    console.log('01245 first appears after 5 recipes.');
+    console.log('92510 first appears after 18 recipes.');
+    console.log('59414 first appears after 2018 recipes.');
+    console.log('How many recipes appear on the scoreboard to the left of the score sequence in your puzzle input?');
+    console.log('Your puzzle input is still 540391.');
     console.log('-----------------------------------');
-    console.log('Your puzzle answer was  ');
+    console.log('Your puzzle answer was  ' + calculateNumRecipesToTryBeforeGettingScores(scores));
     console.log('-----------------------------------');
 }
 
-function moveUntilOneCartIsLeft(track, carts){
-    while(carts.length > 1){
-        sortCarts(carts);
-        for (let i = 0; i < carts.length; i++){
-            if(!carts[i].hasCrashed){
-                carts[i].move(track);
-                let crash = findCrash(carts, i);
-                if(crash !== -1){
-                    carts[i].hasCrashed = true;
-                    carts[crash].hasCrashed = true;
-                }
+function calculateNumRecipesToTryBeforeGettingScores(scores){
+    let recipesScores = new Array(Math.pow(2, 32) - 1);
+    let lengthRecipesScores = 2;
+    recipesScores[0] = 3;
+    recipesScores[1] = 7;
+    let elvesCooking = [0, 1];
+    let scoresFound = false;
+    let lastScores = '';
+    let index = -1;
+
+    while (!scoresFound){
+        let newScores = tryRecipesAndGetNewScores(elvesCooking, recipesScores);
+        newScores.forEach(s => {
+            recipesScores[lengthRecipesScores] = s;
+            lengthRecipesScores++;
+            lastScores += s;
+        });
+        for(let i = 0; i < elvesCooking.length; i++){
+            elvesCooking[i] = moveElf(elvesCooking[i], recipesScores[elvesCooking[i]], lengthRecipesScores);
+        }
+        if((lastScores.length === scores.length && lastScores === scores) || 
+        (lastScores.length > scores.length && (lastScores.substring(1) == scores || lastScores.substring(0, scores.length) === scores))){
+            scoresFound = true;
+            if(scores === lastScores || lastScores.substring(1) == scores){
+                index = lengthRecipesScores - scores.length;
+            }
+            if(lastScores.substring(0, scores.length) === scores){
+                index = lengthRecipesScores - lastScores.length;
             }
         }
-        carts = carts.filter(c => c.hasCrashed === false);
+        else{
+            if(lastScores.length >= scores.length){
+                lastScores = lastScores.substring(lastScores.length - (scores.length - 1));
+            }
+        }
     }
-    return carts[0];
+
+    return index;
 }
 
 function day14(){
     console.log('--- Day 14: Chocolate Charts ---');
-    let numRecipes = 540391;
-    partOne(numRecipes);
-    //partTwo(numRecipes);
+    let numRecipes = '540391';
+    partOne(parseInt(numRecipes));
+    partTwo(numRecipes);
     console.log('\n\n');
 }
 
-export { day14, calculateScoresAfterTryingXRecipes, tryRecipesAndGetNewScores, moveElf };
+export { day14, calculateScoresAfterTryingXRecipes, tryRecipesAndGetNewScores, moveElf, getScoresOfRecipesTriedAfter, calculateNumRecipesToTryBeforeGettingScores };
