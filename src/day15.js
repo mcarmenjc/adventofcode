@@ -7,10 +7,11 @@ let PLAYER_TYPE = {
 }
 
 let Player = class {
-    constructor(row, col, hitPower, type){
+    constructor(row, col, hitPoints, attackPower, type){
         this.row = row;
         this.column = col;
-        this.hitPower = hitPower;
+        this.hitPoints = hitPoints;
+        this.attackPower = attackPower;
         this.type = type;
     }
 
@@ -31,15 +32,20 @@ let Player = class {
     }
 
     attacked(damage){
-        hitPower -= damage;
+        this.hitPoints -= damage;
     }
 
     isDead(){
-        return this.hitPower <= 0;
+        return this.hitPoints <= 0;
+    }
+
+    setNewPostion(newPosition){
+        this.row = newPosition[0];
+        this.column = newPosition[1];
     }
 
     print(){
-        console.log((this.type === PLAYER_TYPE.GOBLIN ? 'GOBLIN' : 'ELF') + ' => (' + this.row + ', ' + this.column + ') live (' + this.hitPower + ')');
+        console.log((this.type === PLAYER_TYPE.GOBLIN ? 'GOBLIN' : 'ELF') + ' => (' + this.row + ', ' + this.column + ') live (' + this.hitPoints + ')');
     }
 }
 
@@ -277,6 +283,37 @@ function partOne(){
     console.log('-----------------------------------');
 }
 
+function playBattle(map, characters){
+    let round = 0;
+    let noElfs = true;
+    let noGoblins = true;
+    characters.forEach(p => {
+        if(p.type === PLAYER_TYPE.GOBLIN && !p.isDead()){
+            noGoblins = false;
+        }
+        if(p.type === PLAYER_TYPE.ELF && !p.isDead()){
+            noElfs = false;
+        }
+    });
+
+    while(!noElfs && !noGoblins){
+        round ++;
+        playRound(map, characters);
+        noGoblins = true;
+        noElfs = true;
+        characters.forEach(p => {
+            if(p.type === PLAYER_TYPE.GOBLIN && !p.isDead()){
+                noGoblins = false;
+            }
+            if(p.type === PLAYER_TYPE.ELF && !p.isDead()){
+                noElfs = false;
+            }
+        });
+    }
+
+    return round;
+}
+
 function playRound(map, characters){
     characters.sort((a, b) => {
         if(a.row < b.row){
@@ -289,17 +326,43 @@ function playRound(map, characters){
     });
 
     characters.forEach(player => {
-        let nextPosition = findTarget(player, players, map);
+        if(!player.isDead()){
+            let [enemyId, distance, nextMove] = movePlayer(player, characters, map);
+            player.setNewPostion(nextMove);
+            let targetEnemy = findTarget(player, characters);
+            if(targetEnemy !== -1){
+                characters[targetEnemy].attacked(player.attackPower);
+            }
+        }
     });
 }
 
-function findTarget(currentPlayer, players, map){
+function findTarget(player, players){
+    let enemyWithLessHitPoints = -1;
+    let minHitPoints = 201;
+    let moves = [[-1, 0], [0, -1], [0, 1], [1, 0]];
+    players.forEach((p, index) => {
+        if(!p.isDead() && p.type !== player.type){
+            moves.forEach(m => {
+                if(player.row + m[0] === p.row && player.column + m[1] === p.column){
+                    if(p.hitPoints < minHitPoints){
+                        minHitPoints = p.hitPoints;
+                        enemyWithLessHitPoints = index;
+                    }
+                }
+            });
+        }
+    });
+    return enemyWithLessHitPoints;
+}
+
+function movePlayer(currentPlayer, players, map){
     let currentPlayerId = currentPlayer.row + ',' + currentPlayer.column;
     let cellsToVisit = [[currentPlayer.row, currentPlayer.column]];
     let distance = {};
     distance[currentPlayerId] = 0;
     let previousCell = {};
-    let moves = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+    let moves = [[-1, 0], [0, -1], [0, 1], [1, 0]];
     let allPlayers = players.reduce((playersObj, p, pIndex) => {
         if(!p.isDead()){
             let id = p.row + ',' + p.column;
@@ -330,34 +393,37 @@ function findTarget(currentPlayer, players, map){
                     previousCell[cellId] = currentPosition;
                     distance[cellId] = distance[previousId] + 1;
                 }
-
-                if(!allPlayers.hasOwnProperty(cellId) &&
-                    !previousCell.hasOwnProperty(cellId) &&
-                    map[cell[0]][cell[1]] !== '#'){
-                    previousCell[cellId] = currentPosition;
-                    distance[cellId] = distance[previousId] + 1;
-                    cellsToVisit.push(cell);
+                else {
+                    if(!allPlayers.hasOwnProperty(cellId) &&
+                        !previousCell.hasOwnProperty(cellId) &&
+                        map[cell[0]][cell[1]] !== '#'){
+                        previousCell[cellId] = currentPosition;
+                        distance[cellId] = distance[previousId] + 1;
+                        cellsToVisit.push(cell);
+                    }
                 }
             }
         });
     }
 
     if(closest === undefined){
-        return [-1, -1, undefined];
+        return [-1, -1, [currentPlayer.row, currentPlayer.column]];
     }
-
     let cellId = closest[0] + ',' + closest[1];
-    let move = previousCell[cellId];
-    let prevMoveId = prevMove[0] + ',' + prevMove[1];
-    let prevMove = previousCell[prevMoveId];
-    while(prevMove[0] !== currentPlayer.row && prevMove[1] !== currentPlayer.column){
-        move = 
-        prevMoveId = prevMove[0] + ',' + prevMove[1];
-        prevMove = previousCell[prevMoveId];
-        
+    if(distance[cellId] > 1){
+        let move = closest;
+        let prevMove = previousCell[cellId];
+        while(prevMove[0] !== currentPlayer.row || prevMove[1] !== currentPlayer.column){
+            move = prevMove;
+            cellId = prevMove[0] + ',' + prevMove[1];
+            prevMove = previousCell[cellId];
+        }
+        cellId = closest[0] + ',' + closest[1];
+        return [allEnemies[cellId], distance[cellId], move];
     }
-
-    return [allEnemies[cellId], distance[cellId], prevMove];
+    else {
+        return [allEnemies[cellId], distance[cellId], previousCell[cellId]];
+    }
 }
 
 function partTwo(scores){
@@ -392,7 +458,7 @@ function readBattleSetup(){
         for(let j = 0; j < row.length; j++){
             if(row[j] === PLAYER_TYPE.GOBLIN || row[j] === PLAYER_TYPE.ELF){
                 row[j] = '.';
-                characters.push(new Player(i, j, 200, row[j] === PLAYER_TYPE.GOBLIN ? PLAYER_TYPE.GOBLIN : PLAYER_TYPE.ELF));
+                characters.push(new Player(i, j, 200, 3, row[j] === PLAYER_TYPE.GOBLIN ? PLAYER_TYPE.GOBLIN : PLAYER_TYPE.ELF));
             }
         }
         map.push(row);
@@ -401,4 +467,4 @@ function readBattleSetup(){
     return [map, characters];
 }
 
-export { day15, Player, PLAYER_TYPE, findTarget };
+export { day15, Player, PLAYER_TYPE, movePlayer, playRound, playBattle };
