@@ -45,11 +45,11 @@ let Player = class {
     }
 
     print(){
-        console.log((this.type === PLAYER_TYPE.GOBLIN ? 'GOBLIN' : 'ELF') + ' => (' + this.row + ', ' + this.column + ') live (' + this.hitPoints + ')');
+        console.log((this.type === PLAYER_TYPE.GOBLIN ? 'GOBLIN' : 'ELF') + ' => (' + this.column + ', ' + this.row + ') live (' + this.hitPoints + ')');
     }
 }
 
-function partOne(){
+function partOne(map, players){
     console.log('Having perfected their hot chocolate, the Elves have a new problem: the Goblins that live in these caves will do anything to steal it. Looks like they\'re here for a fight.');
     console.log('You scan the area, generating a map of the walls (#), open cavern (.), and starting position of every Goblin (G) and Elf (E) (your puzzle input).');
     console.log('Combat proceeds in rounds; in each round, each unit that is still alive takes a turn, resolving all of its actions before the next unit\'s turn begins. On each unit\'s turn, it tries to move into range of an enemy (if it isn\'t already) and then attack (if it is in range).');
@@ -279,36 +279,43 @@ function partOne(){
     console.log('Outcome: 20 * 937 = 18740');
     console.log('What is the outcome of the combat described in your puzzle input?');
     console.log('-----------------------------------');
-    console.log('Your puzzle answer was  ');
+    console.log('Your puzzle answer was  ' + calculateScoreAfterBattle(map, players));
     console.log('-----------------------------------');
+}
+
+function calculateScoreAfterBattle(map, characters){
+    let numRounds = playBattle(map, characters);
+    let elfsPoints = 0;
+    let goblinPoints = 0;
+
+    characters.forEach(p => {
+        if(!p.isDead()){
+            if(p.type === PLAYER_TYPE.ELF){
+                elfsPoints += p.hitPoints;
+            }
+            else{
+                goblinPoints += p.hitPoints;
+            }
+        }
+    });
+
+    let winningTeamHitPoints = elfsPoints > 0 ? elfsPoints : goblinPoints;
+
+    let score = numRounds * winningTeamHitPoints;
+    return score;
 }
 
 function playBattle(map, characters){
     let round = 0;
-    let noElfs = true;
-    let noGoblins = true;
-    characters.forEach(p => {
-        if(p.type === PLAYER_TYPE.GOBLIN && !p.isDead()){
-            noGoblins = false;
-        }
-        if(p.type === PLAYER_TYPE.ELF && !p.isDead()){
-            noElfs = false;
-        }
-    });
+    let noEnemies = false;
+    let finishedInTheMiddle = false;
 
-    while(!noElfs && !noGoblins){
+    while(!noEnemies){
         round ++;
-        playRound(map, characters);
-        noGoblins = true;
-        noElfs = true;
-        characters.forEach(p => {
-            if(p.type === PLAYER_TYPE.GOBLIN && !p.isDead()){
-                noGoblins = false;
-            }
-            if(p.type === PLAYER_TYPE.ELF && !p.isDead()){
-                noElfs = false;
-            }
-        });
+        [noEnemies, finishedInTheMiddle] = playRound(map, characters);
+        if(noEnemies){
+            return finishedInTheMiddle ? round - 1 : round;
+        }
     }
 
     return round;
@@ -325,16 +332,40 @@ function playRound(map, characters){
         return 1;
     });
 
-    characters.forEach(player => {
+    let roundOutcome = false;
+    let finishedInTheMiddle = false;
+
+    characters.forEach((player, pIndex) => {
         if(!player.isDead()){
-            let [enemyId, distance, nextMove] = movePlayer(player, characters, map);
-            player.setNewPostion(nextMove);
             let targetEnemy = findTarget(player, characters);
+            if (targetEnemy === -1){
+                let [enemyId, distance, nextMove] = movePlayer(player, characters, map);
+                player.setNewPostion(nextMove);
+                targetEnemy = findTarget(player, characters);
+            }
             if(targetEnemy !== -1){
                 characters[targetEnemy].attacked(player.attackPower);
             }
+
+            roundOutcome = !roundOutcome ? areAllEnemiesDead(player.type, characters) : roundOutcome;
+            if(roundOutcome && !finishedInTheMiddle && pIndex < characters.length-1){
+                finishedInTheMiddle = true;
+            }
         }
     });
+
+    return [roundOutcome, finishedInTheMiddle];
+}
+
+function areAllEnemiesDead(currentType, players){
+    let noEnemies = true;
+
+    players.forEach(p => {
+        if(p.type !== currentType && !p.isDead()){
+            noEnemies = false;
+        }
+    });
+    return noEnemies;
 }
 
 function findTarget(player, players){
@@ -372,8 +403,13 @@ function movePlayer(currentPlayer, players, map){
     }, {});
     let allEnemies = players.reduce((enemies, p, pIndex) => {
         if(p.type !== currentPlayer.type && !p.isDead()){
-            let id = p.row + ',' + p.column;
-            enemies[id] = pIndex;
+            moves.forEach(m => {
+                let surroundingPos = [p.row + m[0], p.column + m[1]];
+                let surroundingId = surroundingPos[0] + ',' + surroundingPos[1];
+                if(map[surroundingPos[0]][surroundingPos[1]] !== '#' && !allPlayers.hasOwnProperty(surroundingId)){
+                    enemies[surroundingId] = pIndex;
+                }
+            });
         }
         return enemies;
     }, {});
@@ -409,21 +445,17 @@ function movePlayer(currentPlayer, players, map){
     if(closest === undefined){
         return [-1, -1, [currentPlayer.row, currentPlayer.column]];
     }
+
     let cellId = closest[0] + ',' + closest[1];
-    if(distance[cellId] > 1){
-        let move = closest;
-        let prevMove = previousCell[cellId];
-        while(prevMove[0] !== currentPlayer.row || prevMove[1] !== currentPlayer.column){
-            move = prevMove;
-            cellId = prevMove[0] + ',' + prevMove[1];
-            prevMove = previousCell[cellId];
-        }
-        cellId = closest[0] + ',' + closest[1];
-        return [allEnemies[cellId], distance[cellId], move];
+    let move = closest;
+    let prevMove = previousCell[cellId];
+    while(prevMove[0] !== currentPlayer.row || prevMove[1] !== currentPlayer.column){
+        move = prevMove;
+        cellId = prevMove[0] + ',' + prevMove[1];
+        prevMove = previousCell[cellId];
     }
-    else {
-        return [allEnemies[cellId], distance[cellId], previousCell[cellId]];
-    }
+    cellId = closest[0] + ',' + closest[1];
+    return [allEnemies[cellId], distance[cellId], move];
 }
 
 function partTwo(scores){
@@ -456,9 +488,13 @@ function readBattleSetup(){
     for (let i = 0; i < lines.length; i++){
         let row = lines[i].split('');
         for(let j = 0; j < row.length; j++){
-            if(row[j] === PLAYER_TYPE.GOBLIN || row[j] === PLAYER_TYPE.ELF){
+            if(row[j] === PLAYER_TYPE.GOBLIN){
                 row[j] = '.';
-                characters.push(new Player(i, j, 200, 3, row[j] === PLAYER_TYPE.GOBLIN ? PLAYER_TYPE.GOBLIN : PLAYER_TYPE.ELF));
+                characters.push(new Player(i, j, 200, 3, PLAYER_TYPE.GOBLIN));
+            }
+            if(row[j] === PLAYER_TYPE.ELF){
+                row[j] = '.';
+                characters.push(new Player(i, j, 200, 3, PLAYER_TYPE.ELF));
             }
         }
         map.push(row);
@@ -467,4 +503,4 @@ function readBattleSetup(){
     return [map, characters];
 }
 
-export { day15, Player, PLAYER_TYPE, movePlayer, playRound, playBattle };
+export { day15, Player, PLAYER_TYPE, movePlayer, playRound, playBattle, calculateScoreAfterBattle };

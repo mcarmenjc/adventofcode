@@ -1,5 +1,5 @@
 import {expect}  from 'chai';
-import { Player, PLAYER_TYPE, movePlayer, playRound, playBattle } from '../src/day15';
+import { Player, PLAYER_TYPE, movePlayer, playRound, playBattle, calculateScoreAfterBattle } from '../src/day15';
 
 describe('Day 15', () => {
     describe('Battle', () => {
@@ -57,7 +57,7 @@ describe('Day 15', () => {
                 players.push(new Player(3, 2, 200, 3, PLAYER_TYPE.GOBLIN));
                 players.push(new Player(3, 5, 200, 3, PLAYER_TYPE.GOBLIN));
                 let [enemyId, distance, nextMove] = movePlayer(players[0], players, map);
-                let expectedDistance = 3;
+                let expectedDistance = 2;
 
                 expect(distance).to.equal(expectedDistance);
             });
@@ -274,7 +274,7 @@ describe('Day 15', () => {
             let players = [];
             
             map.push('#######'.split(''));
-            map.push('#...#.#'.split(''));
+            map.push('#.....#'.split(''));
             map.push('#.#...#'.split(''));
             map.push('#..##.#'.split(''));
             map.push('#...#.#'.split(''));
@@ -369,6 +369,160 @@ describe('Day 15', () => {
             let rounds = playBattle(map, players);
             let expectedRounds = 20;
             expect(rounds).to.equal(expectedRounds);
+        });
+
+        describe('Score', () => {
+            it('should be 27730 after 47 rounds', () => {
+                let map = [];
+                let players = [];
+                
+                map.push('#######'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#.#.#.#'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#######'.split(''));
+            
+                players.push(new Player(1, 2, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(2, 4, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(2, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(3, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(4, 3, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(4, 5, 200, 3, PLAYER_TYPE.ELF));
+    
+                let score = calculateScoreAfterBattle(map, players);
+                let expectedScore = 27730;
+                expect(score).to.equal(expectedScore);
+            });
+    
+            it('should be 36334 after 37 rounds', () => {
+                let map = [];
+                let players = [];
+                
+                map.push('#######'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#.#...#'.split(''));
+                map.push('#..##.#'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#######'.split(''));
+            
+                players.push(new Player(1, 1, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(1, 5, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(2, 1, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(2, 3, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(2, 5, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(3, 1, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(4, 5, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(5, 4, 200, 3, PLAYER_TYPE.ELF));
+    
+                let score = calculateScoreAfterBattle(map, players);
+                let expectedScore = 36334;
+                expect(score).to.equal(expectedScore);
+            });
+    
+            it('should be 39514 after 46 rounds', () => {
+                let map = [];
+                let players = [];
+                
+                map.push('#######'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#.#...#'.split(''));
+                map.push('#..##.#'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#######'.split(''));
+            
+                players.push(new Player(1, 1, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(1, 4, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(1, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(2, 3, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(2, 5, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(3, 1, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(3, 5, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(4, 1, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(5, 3, 200, 3, PLAYER_TYPE.ELF));
+    
+                let score = calculateScoreAfterBattle(map, players);
+                let expectedScore = 39514;
+                expect(score).to.equal(expectedScore);
+            });
+    
+            it('should be 27755 after 35 rounds', () => {
+                let map = [];
+                let players = [];
+                
+                map.push('#######'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#.#...#'.split(''));
+                map.push('#..#..#'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#######'.split(''));
+            
+                players.push(new Player(1, 1, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(1, 3, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(2, 3, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(3, 1, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(3, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(4, 1, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(5, 4, 200, 3, PLAYER_TYPE.ELF));
+    
+                let score = calculateScoreAfterBattle(map, players);
+                let expectedScore = 27755;
+                expect(score).to.equal(expectedScore);
+            });
+    
+            it('should be 28944 after 54 rounds', () => {
+                let map = [];
+                let players = [];
+                
+                map.push('#######'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#.#...#'.split(''));
+                map.push('#.###.#'.split(''));
+                map.push('#.#.#.#'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#######'.split(''));
+            
+                players.push(new Player(1, 2, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(2, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(4, 1, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(4, 3, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(4, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(5, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+    
+                let score = calculateScoreAfterBattle(map, players);
+                let expectedScore = 28944;
+                expect(score).to.equal(expectedScore);
+            });
+    
+            it('should be 18740 after 20 rounds', () => {
+                let map = [];
+                let players = [];
+                
+                map.push('#########'.split(''));
+                map.push('#.......#'.split(''));
+                map.push('#...#...#'.split(''));
+                map.push('#..##...#'.split(''));
+                map.push('#...##..# '.split(''));
+                map.push('#...#...#'.split(''));
+                map.push('#.......#'.split(''));
+                map.push('#.......#'.split(''));
+                map.push('#########'.split(''));
+            
+                players.push(new Player(1, 1, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(2, 2, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(3, 7, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(6, 2, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(6, 6, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(7, 6, 200, 3, PLAYER_TYPE.GOBLIN));
+    
+                let score = calculateScoreAfterBattle(map, players);
+                let expectedScore = 18740;
+                expect(score).to.equal(expectedScore);
+            });
         });
     });
 });
