@@ -1,5 +1,5 @@
 import {expect}  from 'chai';
-import { Player, PLAYER_TYPE, movePlayer, playRound, playBattle, calculateScoreAfterBattle } from '../src/day15';
+import { Player, PLAYER_TYPE, movePlayer, playRound, playBattle, calculateScoreAfterBattle, findAttackPowerSoElvesDoNotDie } from '../src/day15';
 
 describe('Day 15', () => {
     describe('Battle', () => {
@@ -521,6 +521,129 @@ describe('Day 15', () => {
     
                 let score = calculateScoreAfterBattle(map, players);
                 let expectedScore = 18740;
+                expect(score).to.equal(expectedScore);
+            });
+        });
+        describe('Attack power for elves', () => {
+            it('should be 15 and get a score of 4988 for the elves to win', () => {
+                let map = [];
+                let players = [];
+                
+                map.push('#######'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#.#.#.#'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#######'.split(''));
+            
+                players.push(new Player(1, 2, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(2, 4, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(2, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(3, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(4, 3, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(4, 5, 200, 3, PLAYER_TYPE.ELF));
+    
+                let score = findAttackPowerSoElvesDoNotDie(map, players);
+                let expectedScore = 4988;
+                expect(score).to.equal(expectedScore);
+            });
+            it('should be 4 and get a score of 31284 for the elves to win', () => {
+                let map = [];
+                let players = [];
+                
+                map.push('#######'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#.#...#'.split(''));
+                map.push('#..##.#'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#######'.split(''));
+            
+                players.push(new Player(1, 1, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(1, 4, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(1, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(2, 3, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(2, 5, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(3, 1, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(3, 5, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(4, 1, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(5, 3, 200, 3, PLAYER_TYPE.ELF));
+
+                let score = findAttackPowerSoElvesDoNotDie(map, players);
+                let expectedScore = 31284;
+                expect(score).to.equal(expectedScore);
+            });
+            it('should be 15 and get a score of 3478 for the elves to win', () => {
+                let map = [];
+                let players = [];
+                
+                map.push('#######'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#.#...#'.split(''));
+                map.push('#..#..#'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#######'.split(''));
+            
+                players.push(new Player(1, 1, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(1, 3, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(2, 3, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(3, 1, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(3, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(4, 1, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(5, 4, 200, 3, PLAYER_TYPE.ELF));
+
+                let score = findAttackPowerSoElvesDoNotDie(map, players);
+                let expectedScore = 3478;
+                expect(score).to.equal(expectedScore);
+            });
+            it('should be 12 and get a score of 6474 for the elves to win', () => {
+                let map = [];
+                let players = [];
+                
+                map.push('#######'.split(''));
+                map.push('#.....#'.split(''));
+                map.push('#.#...#'.split(''));
+                map.push('#.###.#'.split(''));
+                map.push('#.#.#.#'.split(''));
+                map.push('#...#.#'.split(''));
+                map.push('#######'.split(''));
+            
+                players.push(new Player(1, 2, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(2, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(4, 1, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(4, 3, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(4, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(5, 5, 200, 3, PLAYER_TYPE.GOBLIN));
+
+                let score = findAttackPowerSoElvesDoNotDie(map, players);
+                let expectedScore = 6474;
+                expect(score).to.equal(expectedScore);
+            });
+            it('should be 34 and get a score of 1140 for the elves to win', () => {
+                let map = [];
+                let players = [];
+                
+                map.push('#########'.split(''));
+                map.push('#.......#'.split(''));
+                map.push('#...#...#'.split(''));
+                map.push('#..##...#'.split(''));
+                map.push('#...##..#'.split(''));
+                map.push('#...#...#'.split(''));
+                map.push('#.......#'.split(''));
+                map.push('#.......#'.split(''));
+                map.push('#########'.split(''));
+            
+                players.push(new Player(1, 1, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(2, 2, 200, 3, PLAYER_TYPE.ELF));
+                players.push(new Player(3, 7, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(6, 2, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(6, 6, 200, 3, PLAYER_TYPE.GOBLIN));
+                players.push(new Player(7, 6, 200, 3, PLAYER_TYPE.GOBLIN));
+
+                let score = findAttackPowerSoElvesDoNotDie(map, players);
+                let expectedScore = 1140;
                 expect(score).to.equal(expectedScore);
             });
         });

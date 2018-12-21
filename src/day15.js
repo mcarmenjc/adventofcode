@@ -300,7 +300,6 @@ function calculateScoreAfterBattle(map, characters){
     });
 
     let winningTeamHitPoints = elfsPoints > 0 ? elfsPoints : goblinPoints;
-
     let score = numRounds * winningTeamHitPoints;
     return score;
 }
@@ -349,7 +348,11 @@ function playRound(map, characters){
 
             roundOutcome = !roundOutcome ? areAllEnemiesDead(player.type, characters) : roundOutcome;
             if(roundOutcome && !finishedInTheMiddle && pIndex < characters.length-1){
-                finishedInTheMiddle = true;
+                for(let i = pIndex + 1; i < characters.length; i++){
+                    if(!characters[i].isDead() && characters[i].type === player.type){
+                        finishedInTheMiddle = true;
+                    }
+                }
             }
         }
     });
@@ -458,25 +461,115 @@ function movePlayer(currentPlayer, players, map){
     return [allEnemies[cellId], distance[cellId], move];
 }
 
-function partTwo(scores){
+function partTwo(map, players){
     console.log('--- Part Two ---');
-    console.log('As it turns out, you got the Elves\' plan backwards. They actually want to know how many recipes appear on the scoreboard to the left of the first recipes whose scores are the digits from your puzzle input.');
-    console.log('51589 first appears after 9 recipes.');
-    console.log('01245 first appears after 5 recipes.');
-    console.log('92510 first appears after 18 recipes.');
-    console.log('59414 first appears after 2018 recipes.');
-    console.log('How many recipes appear on the scoreboard to the left of the score sequence in your puzzle input?');
-    console.log('Your puzzle input is still 540391.');
+    console.log('According to your calculations, the Elves are going to lose badly. Surely, you won\'t mess up the timeline too much if you give them just a little advanced technology, right?');
+    console.log('You need to make sure the Elves not only win, but also suffer no losses: even the death of a single Elf is unacceptable.');
+    console.log('However, you can\'t go too far: larger changes will be more likely to permanently alter spacetime.');
+    console.log('So, you need to find the outcome of the battle in which the Elves have the lowest integer attack power (at least 4) that allows them to win without a single death. The Goblins always have an attack power of 3.');
+    console.log('In the first summarized example above, the lowest attack power the Elves need to win without losses is 15:');
+    console.log('#######       #######');
+    console.log('#.G...#       #..E..#   E(158)');
+    console.log('#...EG#       #...E.#   E(14)');
+    console.log('#.#.#G#  -->  #.#.#.#');
+    console.log('#..G#E#       #...#.#');
+    console.log('#.....#       #.....#');
+    console.log('#######       #######');
+    console.log('Combat ends after 29 full rounds');
+    console.log('Elves win with 172 total hit points left');
+    console.log('Outcome: 29 * 172 = 4988');
+    console.log('In the second example above, the Elves need only 4 attack power:');
+    console.log('#######       #######');
+    console.log('#E..EG#       #.E.E.#   E(200), E(23)');
+    console.log('#.#G.E#       #.#E..#   E(200)');
+    console.log('#E.##E#  -->  #E.##E#   E(125), E(200)');
+    console.log('#G..#.#       #.E.#.#   E(200)');
+    console.log('#..E#.#       #...#.#');
+    console.log('#######       #######');
+    console.log('Combat ends after 33 full rounds');
+    console.log('Elves win with 948 total hit points left');
+    console.log('Outcome: 33 * 948 = 31284');
+    console.log('In the third example above, the Elves need 15 attack power:');
+    console.log('#######       #######');
+    console.log('#E.G#.#       #.E.#.#   E(8)');
+    console.log('#.#G..#       #.#E..#   E(86)');
+    console.log('#G.#.G#  -->  #..#..#');
+    console.log('#G..#.#       #...#.#');
+    console.log('#...E.#       #.....#');
+    console.log('#######       #######');
+    console.log('Combat ends after 37 full rounds');
+    console.log('Elves win with 94 total hit points left');
+    console.log('Outcome: 37 * 94 = 3478');
+    console.log('In the fourth example above, the Elves need 12 attack power:');
+    console.log('#######       #######');
+    console.log('#.E...#       #...E.#   E(14)');
+    console.log('#.#..G#       #.#..E#   E(152)');
+    console.log('#.###.#  -->  #.###.#');
+    console.log('#E#G#G#       #.#.#.#');
+    console.log('#...#G#       #...#.#');
+    console.log('#######       #######');
+    console.log('Combat ends after 39 full rounds');
+    console.log('Elves win with 166 total hit points left');
+    console.log('Outcome: 39 * 166 = 6474');
+    console.log('In the last example above, the lone Elf needs 34 attack power:');
+    console.log('#########       #########   ');
+    console.log('#G......#       #.......#   ');
+    console.log('#.E.#...#       #.E.#...#   E(38)');
+    console.log('#..##..G#       #..##...#   ');
+    console.log('#...##..#  -->  #...##..#   ');
+    console.log('#...#...#       #...#...#   ');
+    console.log('#.G...G.#       #.......#   ');
+    console.log('#.....G.#       #.......#   ');
+    console.log('#########       #########   ');
+    console.log('Combat ends after 30 full rounds');
+    console.log('Elves win with 38 total hit points left');
+    console.log('Outcome: 30 * 38 = 1140');
+    console.log('After increasing the Elves\' attack power until it is just barely enough for them to win without any Elves dying, what is the outcome of the combat described in your puzzle input?');
     console.log('-----------------------------------');
-    console.log('Your puzzle answer was  ');
+    console.log('Your puzzle answer was  ' + findAttackPowerSoElvesDoNotDie(map, players));
     console.log('-----------------------------------');
+}
+
+function findAttackPowerSoElvesDoNotDie(map, characters){
+    let attackPower = 4;
+    let elvesAlive = 0;
+    let battleScore = undefined;
+    let numElves = characters.reduce((elves, player) => {
+        if(player.type === PLAYER_TYPE.ELF){
+            return elves + 1;
+        }
+        return elves;
+    }, 0);
+
+    while(elvesAlive !== numElves){
+        let battlePlayers = [];
+        characters.forEach(c => {
+            if(c.type === PLAYER_TYPE.GOBLIN){
+                battlePlayers.push(new Player(c.row, c.column, c.hitPoints, c.attackPower, c.type));
+            }
+            else{
+                battlePlayers.push(new Player(c.row, c.column, c.hitPoints, attackPower, c.type));
+            }
+        });
+
+        battleScore = calculateScoreAfterBattle(map, battlePlayers);
+        elvesAlive = battlePlayers.reduce((elves, player) => {
+            if(player.type === PLAYER_TYPE.ELF && !player.isDead()){
+                return elves + 1;
+            }
+            return elves;
+        }, 0);
+        attackPower ++;
+    }
+
+    return battleScore;
 }
 
 function day15(){
     console.log('--- Day 15: Beverage Bandits ---');
     let [map, characters] = readBattleSetup();
     partOne(map, characters);
-    //partTwo();
+    partTwo(map, characters);
     console.log('\n\n');
 }
 
@@ -503,4 +596,4 @@ function readBattleSetup(){
     return [map, characters];
 }
 
-export { day15, Player, PLAYER_TYPE, movePlayer, playRound, playBattle, calculateScoreAfterBattle };
+export { day15, Player, PLAYER_TYPE, movePlayer, playRound, playBattle, calculateScoreAfterBattle, findAttackPowerSoElvesDoNotDie };
