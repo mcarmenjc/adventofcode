@@ -2,12 +2,13 @@
 import {readFileSync} from 'fs';
 
 let GroundSlice = class {
-    constructor(rows, columns, xMin, xMax, yMax){
+    constructor(rows, columns, xMin, xMax, yMin, yMax){
         this.rows = rows;
         this.columns = columns;
         this.ground = new Array(this.rows);
         this.xMin = xMin;
         this.xMax = xMax;
+        this.yMin = yMin;
         this.yMax = yMax;
         for(let i = 0; i < this.rows; i++){
             this.ground[i] = new Array(this.columns);
@@ -37,60 +38,86 @@ let GroundSlice = class {
                 break;
             }
             if(water[2] === '|'){
-                if(this.ground[water[0]][water[1]] === '.'){
-                    this.ground[water[0]][water[1]] = water[2];
-                    waterFlowing.push([water[0]+1, water[1], '|']);
-                }
-                if(this.ground[water[0]][water[1]] === '#' || this.ground[water[0]][water[1]] === '~'){
-                    waterFlowing.push([water[0]-1, water[1], '~']);
-                }
+                waterFlowing.push(this.flowDown(water));
             }
             if(water[2] === '~'){
-                let leftBound = -1;
-                let rightBound = 1;
-                while(this.ground[water[0]][water[1]+leftBound] !== '#' && 
-                    (this.ground[water[0]+1][water[1]+leftBound] === '#' || this.ground[water[0]+1][water[1]+leftBound] === '~')){
-                    leftBound --;
-                }
-                while(this.ground[water[0]][water[1]+rightBound] !== '#'  && 
-                    (this.ground[water[0]+1][water[1]+rightBound] === '#' || this.ground[water[0]+1][water[1]+rightBound] === '~')){
-                    rightBound ++;
-                }
-                let waterType = '~';
-                let righLimitFound = true;
-                let leftLimitFound = true;
-                if(this.ground[water[0]][water[1]+rightBound] !== '#'){
-                    waterType = '|';
-                    righLimitFound = false;
-                }
-                if(this.ground[water[0]][water[1]+leftBound] !== '#'){
-                    waterType = '|';
-                    leftLimitFound = false;
-                }
-
-                for(let i = leftBound + 1; i < rightBound; i++){
-                    this.ground[water[0]][water[1]+i] = waterType;
-                }
-                if(waterType === '|'){
-                    if(!righLimitFound){
-                        this.ground[water[0]][water[1]+rightBound] = waterType;
-                        waterFlowing.push([water[0]+1, water[1]+rightBound, '|']);
-                    }
-                    if(!leftLimitFound){
-                        this.ground[water[0]][water[1]+leftBound] = waterType;
-                        waterFlowing.push([water[0]+1, water[1]+leftBound, '|']);
-                    }
-                }
-                else{
-                    waterFlowing.push([water[0]-1, water[1], '~']);
-                }
+                this.flowHorizontally(water).forEach(w => {
+                    waterFlowing.push(w);
+                });
             }
         }
     }
 
+    flowDown(water){
+        if(this.ground[water[0]][water[1]] === '.'){
+            this.ground[water[0]][water[1]] = water[2];
+            return [water[0]+1, water[1], '|'];
+        }
+        if(this.ground[water[0]][water[1]] === '#' || this.ground[water[0]][water[1]] === '~'){
+            return [water[0]-1, water[1], '~'];
+        }
+
+        return [water[0], water[1], undefined];
+    }
+
+    findLeftAndRightWaterBounds(water){
+        let leftBound = -1;
+        let rightBound = 1;
+        while(this.ground[water[0]][water[1]+leftBound] !== '#' && 
+            (this.ground[water[0]+1][water[1]+leftBound] === '#' || this.ground[water[0]+1][water[1]+leftBound] === '~')){
+            leftBound --;
+        }
+        while(this.ground[water[0]][water[1]+rightBound] !== '#'  && 
+            (this.ground[water[0]+1][water[1]+rightBound] === '#' || this.ground[water[0]+1][water[1]+rightBound] === '~')){
+            rightBound ++;
+        }
+
+        return [leftBound, rightBound];
+    }
+
+    getWaterType(water, leftBound, rightBound){
+        let waterType = '~';
+        if(this.ground[water[0]][water[1]+rightBound] !== '#'){
+            waterType = '|';
+        }
+        if(this.ground[water[0]][water[1]+leftBound] !== '#'){
+            waterType = '|';
+        }
+        return waterType;
+    }
+
+    fillClayZoneWithWater(water, leftBound, rightBound, waterType){
+        for(let i = leftBound + 1; i < rightBound; i++){
+            this.ground[water[0]][water[1]+i] = waterType;
+        }
+    }
+
+    flowHorizontally(water){
+        let [leftBound, rightBound] = this.findLeftAndRightWaterBounds(water);
+        let waterType = this.getWaterType(water, leftBound, rightBound);
+        this.fillClayZoneWithWater(water, leftBound, rightBound, waterType);
+        let flood = [];
+
+        if(waterType === '|'){
+            if(this.ground[water[0]][water[1]+rightBound] !== '#'){
+                this.ground[water[0]][water[1]+rightBound] = waterType;
+                flood.push([water[0]+1, water[1]+rightBound, '|']);
+            }
+            if(this.ground[water[0]][water[1]+leftBound] !== '#'){
+                this.ground[water[0]][water[1]+leftBound] = waterType;
+                flood.push([water[0]+1, water[1]+leftBound, '|']);
+            }
+        }
+        else{
+            flood.push([water[0]-1, water[1], '~']);
+        }
+
+        return flood;
+    }
+
     countFlooded(){
         let flooded = 0;
-        for(let i = 1; i < this.ground.length; i++){
+        for(let i = this.yMin; i < this.ground.length; i++){
             for (let j = 0; j < this.ground[i].length; j++){
                 if(this.ground[i][j] === '~' || this.ground[i][j] === '|'){
                     flooded++;
@@ -98,6 +125,18 @@ let GroundSlice = class {
             }
         }
         return flooded;
+    }
+
+    countNotDriedWater(){
+        let water = 0;
+        for(let i = this.yMin; i < this.ground.length; i++){
+            for (let j = 0; j < this.ground[i].length; j++){
+                if(this.ground[i][j] === '~'){
+                    water++;
+                }
+            }
+        }
+        return water;
     }
 
     print(rows = this.rows){
@@ -241,12 +280,13 @@ function partOne(ground){
     console.log('-----------------------------------');
 }
 
-function partTwo(states, program){
+function partTwo(ground){
     console.log('--- Part Two ---');
-    console.log('Using the samples you collected, work out the number of each opcode and execute the test program (the second section of your puzzle input).');
-    console.log('What value is contained in register 0 after executing the test program?');
+    console.log('After a very long time, the water spring will run dry. How much water will be retained?');
+    console.log('In the example above, water that won\'t eventually drain out is shown as ~, a total of 29 tiles.');
+    console.log('How many water tiles are left after the water spring stops producing water and all remaining water not at rest has drained?');
     console.log('-----------------------------------');
-    console.log('Your puzzle answer was  ');
+    console.log('Your puzzle answer was  ' + ground.countNotDriedWater());
     console.log('-----------------------------------');
 }
 
@@ -255,7 +295,7 @@ function day17(){
     let ground = readClayZones();
     ground.flowWater([0, 500]);
     partOne(ground);
-    //partTwo(capturedOperations, testProgram);
+    partTwo(ground);
     console.log('\n\n');
 }
 
@@ -266,12 +306,13 @@ function readClayZones(){
     let minX = undefined;
     let maxX = undefined;
     let maxY = undefined;
+    let minY = undefined;
     fileContent.split('\n').forEach(line => {
         let xMin, xMax, yMin, yMax;
         if(xYRegex.test(line)){
             let result = line.match(xYRegex);
             xMin = parseInt(result[1]);
-            xMax = parseInt(result[1]);
+            yMin = parseInt(result[2]);
             yMax = parseInt(result[3]);
         }
         if(yXRegex.test(line)){
@@ -279,6 +320,7 @@ function readClayZones(){
             xMin = parseInt(result[2]);
             xMax = parseInt(result[3]);
             yMax = parseInt(result[1]);
+            yMin = parseInt(result[1]);
         }
 
         if(minX === undefined || minX > xMin){
@@ -292,11 +334,15 @@ function readClayZones(){
         if(maxY === undefined || maxY < yMax){
             maxY = yMax;
         }
+
+        if(minY === undefined || minY > yMin){
+            minY = yMin;
+        }
     });
 
     let groundWidth = maxX + 2;
     let groundHeight = maxY + 1;
-    let ground = new GroundSlice(groundHeight, groundWidth, minX, maxX, maxY);
+    let ground = new GroundSlice(groundHeight, groundWidth, minX, maxX, minY, maxY);
 
     fileContent.split('\n').forEach(line => {
         if(xYRegex.test(line)){
