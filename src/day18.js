@@ -62,8 +62,33 @@ let Forest = class {
     }
 
     changeAcresForXMinutes(numMinutes){
-        for(let i = 0; i < numMinutes; i++){
+        let differentAcres = {};
+        let cycleLen = numMinutes;
+        let i = 1;
+        let stop = false;
+        while(i <= numMinutes && !stop){
             this.changeAcres();
+            let tempAcres = [];
+            this.acres.forEach(r => {
+                tempAcres.push(r.join(''));
+            });
+            let strAcres = tempAcres.join(',');
+
+            if(!differentAcres.hasOwnProperty(strAcres)){
+                differentAcres[strAcres] = i;
+            }
+            else{
+                stop = true;
+                cycleLen = i - differentAcres[strAcres];
+            }
+            i++;
+        }
+
+        if (i < numMinutes){
+            let numMinLeft = (numMinutes - i + 1) % cycleLen;
+            for(let j = 0; j < numMinLeft; j++){
+                this.changeAcres();
+            }
         }
     }
 
