@@ -1,4 +1,4 @@
-# Advent Calendar of Code 2020
+# Advent of Code 2020
 
 ```
               ..........|..........                 1 **
@@ -8,6 +8,7 @@
 ~   ~ ~  .'. ~  ~  ~ ____/ ''  ~  ~  ~  ~  ~    ~   5 **
   ~    ~ ''  .._____/ ~   ~  ~  ~    _ ~ _   O>     6 **
  ~  ~ ~   ~ :[]'.   ~   ~      ~  \ / \ / \ /  ~    7 **
+       ~     '.\ ~        ~  ~   ~  ~      ~    ~   8 **
 ```
 
 - Day 1 ([problem](day1.md)) ([code](day1.js))
@@ -17,3 +18,4 @@
 - Day 5 ([problem](day5.md)) ([code](day5.js))
 - Day 6 ([problem](day6.md)) ([code](day6.js))
 - Day 7 ([problem](day7.md)) ([code](day7.js))
+- Day 8 ([problem](day8.md)) ([code](day8.js))
