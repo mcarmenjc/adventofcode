@@ -1,0 +1,20 @@
+{
+  "name": "adventcalendarofcode2020",
+  "version": "1.0.0",
+  "description": "Advent Calendar of Code 2020",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mcarmenjc/adventcalendarofcode2020.git"
+  },
+  "author": "Maria del Carmen Jimenez Campos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mcarmenjc/adventcalendarofcode2020/issues"
+  },
+  "homepage": "https://github.com/mcarmenjc/adventcalendarofcode2020#readme"
+}
