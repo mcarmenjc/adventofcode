@@ -11,6 +11,11 @@
        ~     '.\ ~        ~  ~   ~  ~      ~    ~   8 **
  ~   ~      ~   \  ~   ~        ~      ~      ~    17 
        ~       ~ \      .''''..    ~       ~    .   9 **
+    ~       ~     \ ~   .'^ , .'      ~  ~  ..''   16
+...     ~      ~   \    :^ , :   ~       :''  , ^  18
+###: ...    ~      ~\    '..'          ~ '. ,      15
+.'' .'##'.           \ ~       ~   ~      :  , ^   19
+'...'#####'.  ~    ~  \   ~            .'' ,  ^ ^  10 **
 ```
 
 - Day 1 ([problem](day1.md)) ([code](day1.js))
@@ -22,3 +27,4 @@
 - Day 7 ([problem](day7.md)) ([code](day7.js))
 - Day 8 ([problem](day8.md)) ([code](day8.js))
 - Day 9 ([problem](day9.md)) ([code](day9.js))
+- Day 10 ([problem](day10.md)) ([code](day10.js))
