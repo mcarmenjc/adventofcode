@@ -43,8 +43,45 @@ function getEarliestBus(departTime, buses){
     };
 }
 
+function getAllBusSchedules(input){
+    let buses = (input.split('\n')[1]).split(',');
+    let busSchedules = [];
+    for (let i = 0; i < buses.length; i++){
+        if(buses[i] !== 'x'){
+            busSchedules.push({
+                'busNo': Number.parseInt(buses[i]),
+                'delay': i
+            });
+        }
+    }
+    return busSchedules;
+}
+
+function findEarliestTimeForSynchronizedBusArrivals(busSchedules) {
+    busSchedules.sort((a, b) => b.busNo - a.busNo);
+    
+    let timeInc = busSchedules[0].busNo;
+    let startTime = busSchedules[0].busNo - busSchedules[0].delay;
+
+    for (let i = 1; i < busSchedules.length; i++){
+        let remainder = (((busSchedules[i].busNo - busSchedules[i].delay) % busSchedules[i].busNo) + busSchedules[i].busNo) % busSchedules[i].busNo;
+        
+        while (startTime%busSchedules[i].busNo !== remainder){
+            startTime += timeInc;
+        }
+        timeInc *= busSchedules[i].busNo;
+    }
+
+    return startTime;
+}
+
 let {departTime, busNo} = processInput(input);
 let {earliestBus, wait} = getEarliestBus(departTime, busNo);
 
+let testSch = `939
+7,13,x,x,59,x,31,19`;
+let busSchedules = getAllBusSchedules(input);
+let startTime = findEarliestTimeForSynchronizedBusArrivals(busSchedules);
+
 console.log(`Answer part 1: ${(earliestBus*wait)}`);
-//console.log(`Answer part 2: ${distanceUsingWaypoint}`);
+console.log(`Answer part 2: ${startTime}`);
