@@ -62,7 +62,6 @@ namespace adventofcode2021.Days
 
         public static void Print()
         {
-            Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.Write("                      ~   ~  ");
             Console.ForegroundColor = ConsoleColor.Cyan;
