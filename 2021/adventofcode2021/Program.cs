@@ -12,6 +12,7 @@ namespace adventofcode2021
             Day1.Print();
             Day2.Print();
             Day3.Print();
+            Day4.Print();
             Console.WriteLine();
 
             Console.ForegroundColor = ConsoleColor.White;
@@ -29,6 +30,11 @@ namespace adventofcode2021
             int day3Part1 = day3.GetPowerConsuption();
             int day3Part2 = day3.GetLifeSupportRating();
             PrintDaySolution(3, day3Part1, day3Part2);
+
+            Day4 day4 = new Day4();
+            int day4Part1 = day4.PlayBingo();
+            int day4Part2 = day4.GetScoreForLastBoardToWin();
+            PrintDaySolution(4, day4Part1, day4Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
