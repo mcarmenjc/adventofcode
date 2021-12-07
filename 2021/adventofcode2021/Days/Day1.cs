@@ -59,39 +59,5 @@ namespace adventofcode2021.Days
 
             return increases;
         }
-
-        public static void Print()
-        {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write("                      ~   ~  ");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("~");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write(" ~");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("~ ~~");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write("~");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("~~~");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write("~");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("~~");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write("~");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("~");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write("~~");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("~");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write("~  ");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Write(" 1 ");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("**");
-        }
     }
 }

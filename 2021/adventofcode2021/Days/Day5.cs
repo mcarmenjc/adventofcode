@@ -158,29 +158,5 @@ namespace adventofcode2021.Days
 
             return currentsMap;
         }
-
-        public static void Print()
-        {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write("~  . .      .");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("      . ..     . ");
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.Write(".");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write(".");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Write("|\\");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write(".");
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.Write(".");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("''             ");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Write(" 5 ");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("**");
-        }
     }
 }

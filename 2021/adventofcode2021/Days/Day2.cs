@@ -81,17 +81,5 @@ namespace adventofcode2021.Days
 
             return (submarinePosition.X * submarinePosition.Y);
         }
-
-        public static void Print()
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("                                     ..    ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("..''''  ");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Write(" 2 ");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("**");
-        }
     }
 }

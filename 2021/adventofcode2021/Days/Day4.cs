@@ -165,17 +165,5 @@ namespace adventofcode2021.Days
 
             return score;
         }
-
-        public static void Print()
-        {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write("                         '      .'    ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("....'        ");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Write(" 4 ");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("**");
-        }
     }
 }

@@ -7,16 +7,6 @@ namespace adventofcode2021
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("                  .-*_* CALENDAR *_*-.                  ");
-            Console.WriteLine();
-            Day1.Print();
-            Day2.Print();
-            Day3.Print();
-            Day4.Print();
-            Day5.Print();
-            Day6.Print();
-            Console.WriteLine();
-
             Console.ForegroundColor = ConsoleColor.White;
             Day1 day1 = new Day1();
             int day1Part1 = day1.GetNumberOfTimesMeasurementIncreases();
@@ -47,6 +37,11 @@ namespace adventofcode2021
             long day6Part1 = day6.GetNumberOfLanternfistAfterXDays(80);
             long day6Part2 = day6.GetNumberOfLanternfistAfterXDays(256);
             PrintDaySolution(6, day6Part1, day6Part2);
+
+            Day7 day7 = new Day7();
+            long day7Part1 = day7.GetMinNumberOfFuelToAlignCrabSubmarines();
+            long day7Part2 = day7.GetMinNumberOfFuelToAlignCrabSubmarinesNonLinear();
+            PrintDaySolution(7, day7Part1, day7Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
