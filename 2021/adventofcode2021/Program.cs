@@ -13,6 +13,7 @@ namespace adventofcode2021
             Day2.Print();
             Day3.Print();
             Day4.Print();
+            Day5.Print();
             Console.WriteLine();
 
             Console.ForegroundColor = ConsoleColor.White;
@@ -35,6 +36,11 @@ namespace adventofcode2021
             int day4Part1 = day4.PlayBingo();
             int day4Part2 = day4.GetScoreForLastBoardToWin();
             PrintDaySolution(4, day4Part1, day4Part2);
+
+            Day5 day5 = new Day5();
+            int day5Part1 = day5.GetNumberOfPointsWhereTwoOrMoreLinesIntersectForHorizontalAndVerticalLines();
+            int day5Part2 = day5.GetNumberOfPointsWhereTwoOrMoreLinesIntersect();
+            PrintDaySolution(5, day5Part1, day5Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
