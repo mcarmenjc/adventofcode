@@ -42,6 +42,11 @@ namespace adventofcode2021
             long day7Part1 = day7.GetMinNumberOfFuelToAlignCrabSubmarines();
             long day7Part2 = day7.GetMinNumberOfFuelToAlignCrabSubmarinesNonLinear();
             PrintDaySolution(7, day7Part1, day7Part2);
+
+            Day8 day8 = new Day8();
+            long day8Part1 = day8.CountUniqueDigitsInOutputs();
+            long day8Part2 = day8.GetSumOfAllDecodedOutputs();
+            PrintDaySolution(8, day8Part1, day8Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
