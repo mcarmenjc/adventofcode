@@ -47,6 +47,11 @@ namespace adventofcode2021
             long day8Part1 = day8.CountUniqueDigitsInOutputs();
             long day8Part2 = day8.GetSumOfAllDecodedOutputs();
             PrintDaySolution(8, day8Part1, day8Part2);
+
+            Day9 day9 = new Day9();
+            long day9Part1 = day9.GetSumOfRiskLevels();
+            long day9Part2 = day9.GetValueOf3LargestBasins();
+            PrintDaySolution(9, day9Part1, day9Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
