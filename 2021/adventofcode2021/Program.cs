@@ -52,6 +52,11 @@ namespace adventofcode2021
             long day9Part1 = day9.GetSumOfRiskLevels();
             long day9Part2 = day9.GetValueOf3LargestBasins();
             PrintDaySolution(9, day9Part1, day9Part2);
+
+            Day10 day10 = new Day10();
+            long day10Part1 = day10.GetSyntaxErrorScore();
+            long day10Part2 = day10.GetAutocompleteMiddleScore();
+            PrintDaySolution(10, day10Part1, day10Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
