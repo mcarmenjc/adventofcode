@@ -57,6 +57,11 @@ namespace adventofcode2021
             long day10Part1 = day10.GetSyntaxErrorScore();
             long day10Part2 = day10.GetAutocompleteMiddleScore();
             PrintDaySolution(10, day10Part1, day10Part2);
+
+            Day11 day11 = new Day11();
+            long day11Part1 = day11.GetNumberOfFlashesAfterXSteps(100);
+            long day11Part2 = day11.GetStepAllOctopusesFlashAtTheSameTime();
+            PrintDaySolution(11, day11Part1, day11Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
