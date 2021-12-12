@@ -62,6 +62,11 @@ namespace adventofcode2021
             long day11Part1 = day11.GetNumberOfFlashesAfterXSteps(100);
             long day11Part2 = day11.GetStepAllOctopusesFlashAtTheSameTime();
             PrintDaySolution(11, day11Part1, day11Part2);
+
+            Day12 day12 = new Day12();
+            long day12Part1 = day12.GetNumPathsToExit();
+            long day12Part2 = day12.GetNumPathsToExitWithRepeatedSmallCave();
+            PrintDaySolution(12, day12Part1, day12Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
