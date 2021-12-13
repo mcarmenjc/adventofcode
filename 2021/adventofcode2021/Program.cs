@@ -67,6 +67,12 @@ namespace adventofcode2021
             long day12Part1 = day12.GetNumPathsToExit();
             long day12Part2 = day12.GetNumPathsToExitWithRepeatedSmallCave();
             PrintDaySolution(12, day12Part1, day12Part2);
+
+            Day13 day13 = new Day13();
+            long day13Part1 = day13.GetNumPointsAfter1stFold();
+            long day13Part2 = 0;
+            PrintDaySolution(13, day13Part1, day13Part2);
+            day13.PrintCodeAfterFolding();
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
