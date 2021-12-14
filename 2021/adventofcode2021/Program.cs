@@ -73,6 +73,11 @@ namespace adventofcode2021
             long day13Part2 = 0;
             PrintDaySolution(13, day13Part1, day13Part2);
             day13.PrintCodeAfterFolding();
+
+            Day14 day14 = new Day14();
+            long day14Part1 = day14.CalculateMostCommonElementMinusLeastCommonElementAfterXSteps(10);
+            long day14Part2 = day14.CalculateMostCommonElementMinusLeastCommonElementAfterXSteps(40);
+            PrintDaySolution(14, day14Part1, day14Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
