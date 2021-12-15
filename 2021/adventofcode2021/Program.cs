@@ -78,6 +78,11 @@ namespace adventofcode2021
             long day14Part1 = day14.CalculateMostCommonElementMinusLeastCommonElementAfterXSteps(10);
             long day14Part2 = day14.CalculateMostCommonElementMinusLeastCommonElementAfterXSteps(40);
             PrintDaySolution(14, day14Part1, day14Part2);
+
+            Day15 day15 = new Day15();
+            long day15Part1 = day15.GetRiskForSafestPathInTile();
+            long day15Part2 = day15.GetRiskForSafestPathInFullMap();
+            PrintDaySolution(15, day15Part1, day15Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
