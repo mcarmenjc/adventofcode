@@ -83,6 +83,11 @@ namespace adventofcode2021
             long day15Part1 = day15.GetRiskForSafestPathInTile();
             long day15Part2 = day15.GetRiskForSafestPathInFullMap();
             PrintDaySolution(15, day15Part1, day15Part2);
+
+            Day16 day16 = new Day16();
+            long day16Part1 = day16.GetVersionsValue();
+            long day16Part2 = day16.EvaluatePacket();
+            PrintDaySolution(16, day16Part1, day16Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
