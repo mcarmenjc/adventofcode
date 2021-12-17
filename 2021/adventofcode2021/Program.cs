@@ -88,6 +88,11 @@ namespace adventofcode2021
             long day16Part1 = day16.GetVersionsValue();
             long day16Part2 = day16.EvaluatePacket();
             PrintDaySolution(16, day16Part1, day16Part2);
+
+            Day17 day17 = new Day17();
+            long day17Part1 = day17.CalculateHighesYPosition();
+            long day17Part2 = day17.GetPossibleInitialVelocitiesToReachTarget();
+            PrintDaySolution(17, day17Part1, day17Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
