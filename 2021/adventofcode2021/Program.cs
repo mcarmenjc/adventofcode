@@ -93,6 +93,11 @@ namespace adventofcode2021
             long day17Part1 = day17.CalculateHighesYPosition();
             long day17Part2 = day17.GetPossibleInitialVelocitiesToReachTarget();
             PrintDaySolution(17, day17Part1, day17Part2);
+
+            Day18 day18 = new Day18();
+            long day18Part1 = day18.CalculateMagnitudOfSum();
+            long day18Part2 = day18.GetLargestMagnitudOfAnyTwoNumbers();
+            PrintDaySolution(18, day18Part1, day18Part2);
         }
 
         private static void PrintDaySolution(int day, double part1, double part2)
