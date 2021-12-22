@@ -5,7 +5,7 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day8
+    public class Day8 : Day
     {
         public class Note
         {
@@ -99,24 +99,36 @@ namespace adventofcode2021.Days
             }
         }
 
-        private IList<Note> _notes;
-
-        public Day8()
+        public override void Run()
         {
-            string[] lines = System.IO.File.ReadAllLines(@".\Inputs\day8.txt");
-            _notes = new List<Note>();
+            PrintDayHeader(8);
+            IList<Note> notes = ParseFile();
 
-            foreach(string line in lines)
-            {
-                _notes.Add(Note.Parse(line));
-            }
+            int uniqueDigits = CountUniqueDigitsInOutputs(notes);
+            PrintPart(1, $"{uniqueDigits}");
+
+            int sumOfDecodedOutputs = GetSumOfAllDecodedOutputs(notes);
+            PrintPart(2, $"{sumOfDecodedOutputs}");
         }
 
-        public int CountUniqueDigitsInOutputs()
+        private IList<Note> ParseFile()
+        {
+            string[] lines = System.IO.File.ReadAllLines(@".\Inputs\day8.txt");
+            IList<Note> notes = new List<Note>();
+
+            foreach (string line in lines)
+            {
+                notes.Add(Note.Parse(line));
+            }
+
+            return notes;
+        }
+
+        private int CountUniqueDigitsInOutputs(IList<Note> notes)
         {
             int count = 0;
 
-            foreach(Note n in _notes)
+            foreach(Note n in notes)
             {
                 foreach(string digit in n.OutputValue)
                 {
@@ -130,11 +142,11 @@ namespace adventofcode2021.Days
             return count;
         }
 
-        public int GetSumOfAllDecodedOutputs()
+        private int GetSumOfAllDecodedOutputs(IList<Note> notes)
         {
             int counter = 0;
 
-            foreach(Note n in _notes)
+            foreach(Note n in notes)
             {
                 int decodedOutput = n.DecodeOutput();
                 counter += decodedOutput;
@@ -142,7 +154,5 @@ namespace adventofcode2021.Days
 
             return counter;
         }
-
-        
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day2
+    public class Day2 : Day
     {
         public class Position
         {
@@ -23,6 +23,31 @@ namespace adventofcode2021.Days
             {
                 _course.Add(ParseLine(line));
             }
+        }
+
+        public override void Run()
+        {
+            PrintDayHeader(2);
+
+            IList<Position> course = ParseFile();
+            int submarinePos = MoveSubmarine(course);
+            PrintPart(1, $"{submarinePos}");
+            
+            int submarinePosWithAim = MoveSubmarineWithAim(course);
+            PrintPart(2, $"{submarinePosWithAim}");
+        }
+
+        private IList<Position> ParseFile()
+        {
+            IList<Position> course = new List<Position>();
+            string[] lines = System.IO.File.ReadAllLines(@".\Inputs\day2.txt");
+
+            foreach (string line in lines)
+            {
+                course.Add(ParseLine(line));
+            }
+
+            return course;
         }
 
         private Position ParseLine(string line)
@@ -48,11 +73,11 @@ namespace adventofcode2021.Days
             return direction;
         }
 
-        public int MoveSubmarine()
+        private int MoveSubmarine(IList<Position> course)
         {
             Position submarinePosition = new Position() { X = 0, Y = 0 };
 
-            foreach (Position direction in _course)
+            foreach (Position direction in course)
             {
                 submarinePosition.X += direction.X;
                 submarinePosition.Y += direction.Y;
@@ -61,12 +86,12 @@ namespace adventofcode2021.Days
             return (submarinePosition.X * submarinePosition.Y);
         }
 
-        public int MoveSubmarineWithAim()
+        private int MoveSubmarineWithAim(IList<Position> course)
         {
             Position submarinePosition = new Position() { X = 0, Y = 0 };
             int aim = 0;
 
-            foreach (Position direction in _course)
+            foreach (Position direction in course)
             {
                 if (direction.X != 0)
                 {

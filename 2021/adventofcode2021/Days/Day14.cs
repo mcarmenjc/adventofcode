@@ -5,34 +5,41 @@ using System.Threading.Tasks;
 
 namespace adventofcode2021.Days
 {
-    public class Day14
+    public class Day14 : Day
     {
-        private IDictionary<string, string> _insertionRules;
-        private string _polymerTemplate;
-
-        public Day14()
+        public override void Run()
         {
+            PrintDayHeader(14);
+
             string manual = System.IO.File.ReadAllText(@".\Inputs\day14.txt");
             string[] parts = manual.Split("\r\n\r\n");
-            _polymerTemplate = parts[0];
-            ParseInsertionRules(parts[1]);
+            string polymerTemplate = parts[0];
+            IDictionary<string, string> insertionRules = ParseInsertionRules(parts[1]);
+
+            long valueAfter10Steps = CalculateMostCommonElementMinusLeastCommonElementAfterXSteps(10, polymerTemplate, insertionRules);
+            PrintPart(1, $"{valueAfter10Steps}");
+
+            long valueAfter40Steps = CalculateMostCommonElementMinusLeastCommonElementAfterXSteps(40, polymerTemplate, insertionRules);
+            PrintPart(2, $"{valueAfter40Steps}");
         }
 
-        private void ParseInsertionRules(string part)
+        private IDictionary<string, string> ParseInsertionRules(string part)
         {
             string[] rules = part.Split("\r\n");
-            _insertionRules = new Dictionary<string, string>();
+            IDictionary<string, string> insertionRules = new Dictionary<string, string>();
 
             foreach(string rule in rules)
             {
                 string[] ruleParts = rule.Split(" -> ");
-                _insertionRules.Add(ruleParts[0], ruleParts[1]);
+                insertionRules.Add(ruleParts[0], ruleParts[1]);
             }
+
+            return insertionRules;
         }
 
-        public long CalculateMostCommonElementMinusLeastCommonElementAfterXSteps(int steps)
+        private long CalculateMostCommonElementMinusLeastCommonElementAfterXSteps(int steps, string polymerTemplate, IDictionary<string, string> insertionRules)
         {
-            IDictionary<char, long> elementsCounts = GetElementsCounts(steps);
+            IDictionary<char, long> elementsCounts = GetElementsCounts(steps, polymerTemplate, insertionRules);
 
             long mostCommon = 0;
             long leastCommon = long.MaxValue;
@@ -53,11 +60,11 @@ namespace adventofcode2021.Days
             return mostCommon - leastCommon;
         }
 
-        private IDictionary<char, long> GetElementsCounts(int steps)
+        private IDictionary<char, long> GetElementsCounts(int steps, string polymerTemplate, IDictionary<string, string> insertionRules)
         {
             IDictionary<char, long> counts = new Dictionary<char, long>();
 
-            foreach (char c in _polymerTemplate)
+            foreach (char c in polymerTemplate)
             {
                 if (!counts.ContainsKey(c))
                 {
@@ -68,9 +75,9 @@ namespace adventofcode2021.Days
 
             IDictionary<string, long> elementPairs = new Dictionary<string, long>();
 
-            for (int i = 0; i < _polymerTemplate.Length-1; i++)
+            for (int i = 0; i < polymerTemplate.Length-1; i++)
             {
-                string pair = $"{_polymerTemplate[i]}{_polymerTemplate[i + 1]}";
+                string pair = $"{polymerTemplate[i]}{polymerTemplate[i + 1]}";
                 
                 if (!elementPairs.ContainsKey(pair))
                 {
@@ -86,7 +93,7 @@ namespace adventofcode2021.Days
 
                 foreach (string key in elementPairs.Keys)
                 {
-                    char newElement = _insertionRules[key][0];
+                    char newElement = insertionRules[key][0];
 
                     if (!counts.ContainsKey(newElement))
                     {
@@ -114,26 +121,26 @@ namespace adventofcode2021.Days
             return counts;
         }
 
-        private string GeneratePolymerAfterXSteps(int steps)
+        private string GeneratePolymerAfterXSteps(int steps, string polymerTemplate, IDictionary<string, string> insertionRules)
         {
-            string polymer = _polymerTemplate;
+            string polymer = polymerTemplate;
 
             for (int i = 0; i < steps; i++)
             {
-                polymer = GenerateNextPolymer(polymer);
+                polymer = GenerateNextPolymer(polymer, insertionRules);
             }
 
             return polymer;
         }
 
-        private string GenerateNextPolymer(string polymer)
+        private string GenerateNextPolymer(string polymer, IDictionary<string, string> insertionRules)
         {
             StringBuilder polymerBuilder = new StringBuilder();
             polymerBuilder.Append(polymer[0]);
 
             for (int j = 0; j < polymer.Length - 1; j++)
             {
-                string elementToInsert = _insertionRules[$"{polymer[j]}{polymer[j + 1]}"];
+                string elementToInsert = insertionRules[$"{polymer[j]}{polymer[j + 1]}"];
                 polymerBuilder.Append(elementToInsert);
                 polymerBuilder.Append(polymer[j + 1]);
             }

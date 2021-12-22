@@ -4,7 +4,7 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day16
+    public class Day16 : Day
     {
 
         public class Packet
@@ -25,22 +25,17 @@ namespace adventofcode2021.Days
             public long Value { get; set; }
         }
 
-        private Packet _packet = null;
-
         public Day16()
         {
-            string packet = System.IO.File.ReadAllText(@".\Inputs\day16.txt");
-            _packet = ParsePacket(packet);
-        }
+            PrintDayHeader(16);
+            string file = System.IO.File.ReadAllText(@".\Inputs\day16.txt");
+            Packet packet = ParsePacket(file);
 
-        public int GetVersionsValue()
-        {
-            return AddAllVersions(_packet);
-        }
+            int sumOfVersions = AddAllVersions(packet);
+            PrintPart(1, $"{sumOfVersions}");
 
-        public long EvaluatePacket()
-        {
-            return EvaluatePacket(_packet);
+            long packetResult = EvaluatePacket(packet);
+            PrintPart(2, $"{packetResult}");
         }
 
         private long EvaluatePacket(Packet packet)

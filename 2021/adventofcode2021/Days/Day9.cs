@@ -5,42 +5,54 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day9
+    public class Day9 : Day
     {
-        private int[][] _heightmap;
-        
-        public Day9()
+        public override void Run()
+        {
+            PrintDayHeader(9);
+            int[][] heightmap = ParseFile();
+
+            int riskLevels = GetSumOfRiskLevels(heightmap);
+            PrintPart(1, $"{riskLevels}");
+
+            int levelOfLargests = GetValueOf3LargestBasins(heightmap);
+            PrintPart(2, $"{levelOfLargests}");
+        }
+
+        private static int[][] ParseFile()
         {
             string[] rows = System.IO.File.ReadAllLines(@".\Inputs\day9.txt");
-            _heightmap = new int[rows.Length][];
+            int[][] heightmap = new int[rows.Length][];
 
             for (int i = 0; i < rows.Length; i++)
             {
-                _heightmap[i] = rows[i].ToCharArray().Select(x => x - '0').ToArray();
+                heightmap[i] = rows[i].ToCharArray().Select(x => x - '0').ToArray();
             }
+
+            return heightmap;
         }
 
-        public int GetSumOfRiskLevels()
+        private int GetSumOfRiskLevels(int[][] heightmap)
         {
             int sum = 0;
-            IList<Tuple<int, int>> riskPoints = FindRiskPoints();
+            IList<Tuple<int, int>> riskPoints = FindRiskPoints(heightmap);
 
             foreach(var point in riskPoints)
             {
-                sum += _heightmap[point.Item1][point.Item2] + 1;
+                sum += heightmap[point.Item1][point.Item2] + 1;
             }
 
             return sum;
         }
 
-        public int GetValueOf3LargestBasins()
+        private int GetValueOf3LargestBasins(int[][] heightmap)
         {
-            IList<Tuple<int, int>> riskPoints = FindRiskPoints();
+            IList<Tuple<int, int>> riskPoints = FindRiskPoints(heightmap);
             List<int> basinSizes = new List<int>();
 
             foreach(var point in riskPoints)
             {
-                int basinSize = GetBasinSize(point, new HashSet<Tuple<int, int>>());
+                int basinSize = GetBasinSize(point, new HashSet<Tuple<int, int>>(), heightmap);
                 basinSizes.Add(basinSize);
             }
 
@@ -49,7 +61,7 @@ namespace adventofcode2021.Days
             return basinSizes[0]*basinSizes[1]*basinSizes[2];
         }
 
-        private int GetBasinSize(Tuple<int, int> point, HashSet<Tuple<int, int>> visited)
+        private int GetBasinSize(Tuple<int, int> point, HashSet<Tuple<int, int>> visited, int[][] heightmap)
         {
             int[][] moves = new int[][]{
                 new int[] { 0, 1 },
@@ -64,19 +76,19 @@ namespace adventofcode2021.Days
             foreach (int[] move in moves)
             {
                 Tuple<int, int> newPoint = new Tuple<int, int>(point.Item1 + move[0], point.Item2 + move[1]);
-                if (newPoint.Item1 >= 0 && newPoint.Item1 < _heightmap.Length && 
-                    newPoint.Item2 >= 0 && newPoint.Item2 < _heightmap[point.Item1].Length &&
+                if (newPoint.Item1 >= 0 && newPoint.Item1 < heightmap.Length && 
+                    newPoint.Item2 >= 0 && newPoint.Item2 < heightmap[point.Item1].Length &&
                     !visited.Contains(newPoint) &&
-                    _heightmap[newPoint.Item1][newPoint.Item2] < 9)
+                    heightmap[newPoint.Item1][newPoint.Item2] < 9)
                 {
-                    basinSize += GetBasinSize(newPoint, visited);
+                    basinSize += GetBasinSize(newPoint, visited, heightmap);
                 }
             }
 
             return basinSize;
         }
 
-        private IList<Tuple<int, int>> FindRiskPoints()
+        private IList<Tuple<int, int>> FindRiskPoints(int[][] heightmap)
         {
             int[][] moves = new int[][]{
                 new int[] { 0, 1 },
@@ -87,17 +99,17 @@ namespace adventofcode2021.Days
 
             IList<Tuple<int, int>> riskPoints = new List<Tuple<int, int>>();
 
-            for (int i = 0; i < _heightmap.Length; i++)
+            for (int i = 0; i < heightmap.Length; i++)
             {
-                for (int j = 0; j < _heightmap[i].Length; j++)
+                for (int j = 0; j < heightmap[i].Length; j++)
                 {
                     bool isRisk = true;
 
                     foreach (int[] move in moves)
                     {
-                        if (i + move[0] >= 0 && i + move[0] < _heightmap.Length && j + move[1] >= 0 && j + move[1] < _heightmap[i].Length)
+                        if (i + move[0] >= 0 && i + move[0] < heightmap.Length && j + move[1] >= 0 && j + move[1] < heightmap[i].Length)
                         {
-                            isRisk = isRisk && _heightmap[i][j] < _heightmap[i + move[0]][j + move[1]];
+                            isRisk = isRisk && heightmap[i][j] < heightmap[i + move[0]][j + move[1]];
                         }
                     }
 

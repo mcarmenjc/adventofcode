@@ -6,31 +6,27 @@ using System.Text.RegularExpressions;
 
 namespace adventofcode2021.Days
 {
-    public class Day13
+    public class Day13 : Day
     {
-        private IList<Tuple<int, int>> _points;
-        private IList<Tuple<int, int>> _folds;
-
-        public Day13()
+        public override void Run()
         {
+            PrintDayHeader(13);
             string instructions = System.IO.File.ReadAllText(@".\Inputs\day13.txt");
             string[] parts = instructions.Split("\r\n\r\n");
-            ParsePoints(parts[0]);
-            ParseFolds(parts[1]);
+            IList<Tuple<int, int>> points = ParsePoints(parts[0]);
+            IList<Tuple<int, int>> folds = ParseFolds(parts[1]);
 
+
+            IList<Tuple<int, int>> pointsAfterFirstFold = FoldPage(folds[0], points);
+            PrintPart(1, $"{pointsAfterFirstFold.Count}");            
+
+            PrintPart(2, string.Empty);
+            PrintCodeAfterFolding(points, folds);
         }
 
-        public int GetNumPointsAfter1stFold()
+        private void PrintCodeAfterFolding(IList<Tuple<int, int>> points, IList<Tuple<int, int>> folds)
         {
-            IList<Tuple<int, int>> points = FoldPage(_folds[0], _points);
-            return points.Count;
-        }
-
-        public void PrintCodeAfterFolding()
-        {
-            IList<Tuple<int, int>> points = _points;
-
-            foreach (var fold in _folds)
+            foreach (var fold in folds)
             {
                 points = FoldPage(fold, points);
             }
@@ -112,34 +108,38 @@ namespace adventofcode2021.Days
             return foldedPoints.ToList();
         }
 
-        private void ParsePoints(string points)
+        private IList<Tuple<int, int>> ParsePoints(string pointsStr)
         {
-            _points = new List<Tuple<int, int>>();
-            string[] lines = points.Split("\n");
+            IList<Tuple<int, int>> points = new List<Tuple<int, int>>();
+            string[] lines = pointsStr.Split("\n");
             foreach (string line in lines)
             {
                 string[] parts = line.Split(",");
-                _points.Add(new Tuple<int, int>(Int32.Parse(parts[0]), Int32.Parse(parts[1])));
+                points.Add(new Tuple<int, int>(Int32.Parse(parts[0]), Int32.Parse(parts[1])));
             }
+
+            return points;
         }
 
-        private void ParseFolds(string folds)
+        private IList<Tuple<int, int>> ParseFolds(string foldsStr)
         {
-            _folds = new List<Tuple<int, int>>();
-            string[] lines = folds.Split("\n");
+            IList<Tuple<int, int>>  folds = new List<Tuple<int, int>>();
+            string[] lines = foldsStr.Split("\n");
             foreach (string line in lines)
             {
                 Match m = Regex.Match(line, @"([xy])=(\d+)");
 
                 if (m.Groups[1].Value == "x")
                 {
-                    _folds.Add(new Tuple<int, int>(Int32.Parse(m.Groups[2].Value), 0));
+                    folds.Add(new Tuple<int, int>(Int32.Parse(m.Groups[2].Value), 0));
                 }
                 else
                 {
-                    _folds.Add(new Tuple<int, int>(0, Int32.Parse(m.Groups[2].Value)));
+                    folds.Add(new Tuple<int, int>(0, Int32.Parse(m.Groups[2].Value)));
                 }
             }
+
+            return folds;
         }
     }
 }

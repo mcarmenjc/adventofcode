@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace adventofcode2021.Days
 {
-    public class Day4
+    public class Day4 : Day
     {
         public class BingoCard
         {
@@ -97,32 +97,36 @@ namespace adventofcode2021.Days
             }
         }
 
-        private IList<BingoCard> _cards;
-        private IList<int> _numbers;
-
-        public Day4()
+        public override void Run()
         {
-            _cards = new List<BingoCard>();
+            PrintDayHeader(4);
+            IList<BingoCard> cards = new List<BingoCard>();
             string day4 = System.IO.File.ReadAllText(@".\Inputs\day4.txt");
             string[] blocks = day4.Split("\r\n\r\n");
-            _numbers = blocks[0].Split(",").Select(x => Int32.Parse(x)).ToList();
+            IList<int> numbers = blocks[0].Split(",").Select(x => Int32.Parse(x)).ToList();
 
             for (int i = 1; i < blocks.Length; i++)
             {
-                _cards.Add(new BingoCard(blocks[i]));
+                cards.Add(new BingoCard(blocks[i]));
             }
-        }
 
-        public int PlayBingo()
-        {
-            foreach (BingoCard card in _cards)
+            int bingo = PlayBingo(cards, numbers);
+            PrintPart(1, $"{bingo}");
+
+            foreach (BingoCard card in cards)
             {
                 card.ResetCard();
             }
 
-            foreach (int number in _numbers)
+            int scoreForLastBoard = GetScoreForLastBoardToWin(cards, numbers);
+            PrintPart(2, $"{scoreForLastBoard}");
+        }
+
+        private int PlayBingo(IList<BingoCard> cards, IList<int> numbers)
+        {
+            foreach (int number in numbers)
             {
-                foreach(BingoCard card in _cards)
+                foreach(BingoCard card in cards)
                 {
                     int score = card.PlayNumber(number);
                     
@@ -135,28 +139,23 @@ namespace adventofcode2021.Days
             return 0;
         }
 
-        public int GetScoreForLastBoardToWin()
+        private int GetScoreForLastBoardToWin(IList<BingoCard> cards, IList<int> numbers)
         {
-            foreach (BingoCard card in _cards)
-            {
-                card.ResetCard();
-            }
-
-            IList<BingoCard> cards = new List<BingoCard>(_cards);
+            IList<BingoCard> newCards = new List<BingoCard>(cards);
             int i = 0;
             int score = 0;
 
-            while (cards.Count > 0)
+            while (newCards.Count > 0)
             {
-                int number = _numbers[i];
+                int number = numbers[i];
 
-                for (int j = cards.Count - 1; j >= 0; j--)
+                for (int j = newCards.Count - 1; j >= 0; j--)
                 {
-                    score = cards[j].PlayNumber(number);
+                    score = newCards[j].PlayNumber(number);
 
                     if (score >= 0)
                     {
-                        cards.RemoveAt(j);
+                        newCards.RemoveAt(j);
                     }
                 }
 

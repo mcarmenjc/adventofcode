@@ -4,7 +4,7 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day18
+    public class Day18: Day
     {
 
         public class SnailNumber
@@ -17,8 +17,10 @@ namespace adventofcode2021.Days
 
         private IList<SnailNumber> _numbers;
 
-        public Day18()
+        public override void Run()
         {
+            PrintDayHeader(18);
+
             string[] lines = System.IO.File.ReadAllLines(@".\Inputs\day18.txt");
             _numbers = new List<SnailNumber>();
 
@@ -26,6 +28,12 @@ namespace adventofcode2021.Days
             {
                 _numbers.Add(ParseNumber(line));
             }
+
+            int magnitudOfSumAll = CalculateMagnitudOfSum();
+            PrintPart(1, $"{magnitudOfSumAll}");
+
+            int largestMagnitud = GetLargestMagnitudOfAnyTwoNumbers();
+            PrintPart(2, $"{largestMagnitud}");
         }
 
         private SnailNumber ParseNumber(string line)
@@ -77,7 +85,7 @@ namespace adventofcode2021.Days
             return root;
         }
 
-        public int CalculateMagnitudOfSum()
+        private int CalculateMagnitudOfSum()
         {
             SnailNumber sum = CopyNumber(_numbers[0]);
             for (int i = 1; i < _numbers.Count; i++)
@@ -88,7 +96,7 @@ namespace adventofcode2021.Days
             return GetNumberMagnitude(sum);
         }
 
-        public int GetLargestMagnitudOfAnyTwoNumbers()
+        private int GetLargestMagnitudOfAnyTwoNumbers()
         {
             int maxMagnitud = 0;
 

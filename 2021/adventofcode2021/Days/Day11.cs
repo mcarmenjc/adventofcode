@@ -5,25 +5,37 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day11
+    public class Day11 : Day
     {
-        private int[][] _dumboOctopuses;
+        public override void Run()
+        {
+            PrintDayHeader(11);
+            int[][] dumboOctopuses = ParseFile();
 
-        public Day11()
+            int numFlashes = GetNumberOfFlashesAfterXSteps(100, dumboOctopuses);
+            PrintPart(1, $"{numFlashes}");
+
+            int stepAllFlash = GetStepAllOctopusesFlashAtTheSameTime(dumboOctopuses);
+            PrintPart(2, $"{stepAllFlash}");
+        }
+
+        private static int[][] ParseFile()
         {
             string[] lines = System.IO.File.ReadAllLines(@".\Inputs\day11.txt");
-            _dumboOctopuses = new int[lines.Length][];
+            int[][] dumboOctopuses = new int[lines.Length][];
 
             for (int i = 0; i < lines.Length; i++)
             {
-                _dumboOctopuses[i] = lines[i].ToCharArray().Select(x => x - '0').ToArray();
+                dumboOctopuses[i] = lines[i].ToCharArray().Select(x => x - '0').ToArray();
             }
+
+            return dumboOctopuses;
         }
 
-        public int GetNumberOfFlashesAfterXSteps(int numSteps)
+        private int GetNumberOfFlashesAfterXSteps(int numSteps, int[][] dumboOctopuses)
         {
             int numFlashes = 0;
-            int[][] initState = CreateInitState();
+            int[][] initState = CreateInitState(dumboOctopuses);
 
             for (int i = 0; i < numSteps; i++)
             {
@@ -33,10 +45,10 @@ namespace adventofcode2021.Days
             return numFlashes;
         }
 
-        public int GetStepAllOctopusesFlashAtTheSameTime()
+        private int GetStepAllOctopusesFlashAtTheSameTime(int[][] dumboOctopuses)
         {
             int step = 0;
-            int[][] state = CreateInitState();
+            int[][] state = CreateInitState(dumboOctopuses);
             int numFlashes = 0;
             int numOctopus = state.Length * state[0].Length;
 
@@ -104,14 +116,14 @@ namespace adventofcode2021.Days
             return numFlashes;
         }
 
-        private int[][] CreateInitState()
+        private int[][] CreateInitState(int[][] dumboOctopuses)
         {
-            int[][] initState = new int[_dumboOctopuses.Length][];
+            int[][] initState = new int[dumboOctopuses.Length][];
 
-            for(int i = 0; i < _dumboOctopuses.Length; i++)
+            for(int i = 0; i < dumboOctopuses.Length; i++)
             {
-                initState[i] = new int[_dumboOctopuses[i].Length];
-                Array.Copy(_dumboOctopuses[i], initState[i], _dumboOctopuses[i].Length);
+                initState[i] = new int[dumboOctopuses[i].Length];
+                Array.Copy(dumboOctopuses[i], initState[i], dumboOctopuses[i].Length);
             }
 
             return initState;

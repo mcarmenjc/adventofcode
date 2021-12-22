@@ -5,26 +5,32 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day7
+    public class Day7 : Day
     {
-        IList<int> _positions;
-        public Day7()
+        public override void Run()
         {
+            PrintDayHeader(7);
             string counters = System.IO.File.ReadAllText(@".\Inputs\day7.txt");
-            _positions = counters.Split(",").Select(x => Int32.Parse(x)).ToList();
+            IList<int> positions = counters.Split(",").Select(x => Int32.Parse(x)).ToList();
+
+            int fuel = GetMinNumberOfFuelToAlignCrabSubmarines(positions);
+            PrintPart(1, $"{fuel}");
+
+            int fuelNonLinear = GetMinNumberOfFuelToAlignCrabSubmarinesNonLinear(positions);
+            PrintPart(2, $"{fuelNonLinear}");
         }
 
-        public int GetMinNumberOfFuelToAlignCrabSubmarines()
+        private int GetMinNumberOfFuelToAlignCrabSubmarines(IList<int> positions)
         {
             int minFuel = Int32.MaxValue;
-            int minPos = _positions.Min();
-            int maxPos = _positions.Max();
+            int minPos = positions.Min();
+            int maxPos = positions.Max();
 
             for (int i = minPos; i <= maxPos; i++)
             {
                 int fuel = 0;
 
-                foreach(int pos in _positions)
+                foreach(int pos in positions)
                 {
                     fuel += Math.Abs(pos - i);
                 }
@@ -38,17 +44,17 @@ namespace adventofcode2021.Days
             return minFuel;
         }
 
-        public int GetMinNumberOfFuelToAlignCrabSubmarinesNonLinear()
+        private int GetMinNumberOfFuelToAlignCrabSubmarinesNonLinear(IList<int> positions)
         {
             int minFuel = Int32.MaxValue;
-            int minPos = _positions.Min();
-            int maxPos = _positions.Max();
+            int minPos = positions.Min();
+            int maxPos = positions.Max();
 
             for (int i = minPos; i <= maxPos; i++)
             {
                 int fuel = 0;
 
-                foreach (int pos in _positions)
+                foreach (int pos in positions)
                 {
                     int n = Math.Abs(pos - i);
                     fuel += n*(n+1)/2;

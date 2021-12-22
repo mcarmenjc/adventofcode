@@ -5,37 +5,42 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day3
+    public class Day3 : Day
     {
-        private string[] _diagnosticReport;
-
-        public Day3()
+        public override void Run()
         {
-            _diagnosticReport = System.IO.File.ReadAllLines(@".\Inputs\day3.txt");
+            PrintDayHeader(3);
+            string[] diagnosticReport = System.IO.File.ReadAllLines(@".\Inputs\day3.txt");
+
+            int powerConsumption = GetPowerConsuption(diagnosticReport);
+            PrintPart(1, $"{powerConsumption}");
+
+            int lifeSupportRating = GetLifeSupportRating(diagnosticReport);
+            PrintPart(2, $"{lifeSupportRating}");
         }
 
-        public int GetPowerConsuption()
+        private int GetPowerConsuption(string[] diagnosticReport)
         {
-            IList<IDictionary<char, int>> bitsCounts = GetBitsCounts();
+            IList<IDictionary<char, int>> bitsCounts = GetBitsCounts(diagnosticReport);
             int gammaRate = Convert.ToInt32(GetGammaRate(bitsCounts), 2);
             int epsilonRate = Convert.ToInt32(GetEpsilonRate(bitsCounts), 2);
 
             return gammaRate*epsilonRate;
         }
 
-        public int GetLifeSupportRating()
+        private int GetLifeSupportRating(string[] diagnosticReport)
         {
-            int oxygenGeneratorRating = Convert.ToInt32(GetOxygenGeneratorRating(), 2);
-            int co2ScrubberRating = Convert.ToInt32(GetCo2ScrubberRating(), 2);
+            int oxygenGeneratorRating = Convert.ToInt32(GetOxygenGeneratorRating(diagnosticReport), 2);
+            int co2ScrubberRating = Convert.ToInt32(GetCo2ScrubberRating(diagnosticReport), 2);
 
             return oxygenGeneratorRating * co2ScrubberRating;
         }
 
-        private IList<IDictionary<char, int>> GetBitsCounts()
+        private IList<IDictionary<char, int>> GetBitsCounts(string[] diagnosticReport)
         {
             IList<IDictionary<char, int>> bitsCounts = new List<IDictionary<char, int>>();
 
-            foreach (string diagnostic in _diagnosticReport)
+            foreach (string diagnostic in diagnosticReport)
             {
                 for (int i = 0; i < diagnostic.Length; i++)
                 {
@@ -91,9 +96,9 @@ namespace adventofcode2021.Days
             return gammaRate.ToString();
         }
 
-        private string GetOxygenGeneratorRating()
+        private string GetOxygenGeneratorRating(string[] diagnosticReport)
         {
-            IList<string> filteredDiagnostics = new List<string>(_diagnosticReport);
+            IList<string> filteredDiagnostics = new List<string>(diagnosticReport);
             int pos = 0;
 
             while(filteredDiagnostics.Count > 1 && pos < filteredDiagnostics[0].Length)
@@ -129,9 +134,9 @@ namespace adventofcode2021.Days
             return counts;
         }
 
-        private string GetCo2ScrubberRating()
+        private string GetCo2ScrubberRating(string[] diagnosticReport)
         {
-            IList<string> filteredDiagnostics = new List<string>(_diagnosticReport);
+            IList<string> filteredDiagnostics = new List<string>(diagnosticReport);
             int pos = 0;
 
             while (filteredDiagnostics.Count > 1 && pos < filteredDiagnostics[0].Length)

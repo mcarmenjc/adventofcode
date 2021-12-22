@@ -5,7 +5,7 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day5
+    public class Day5 : Day
     {
         public class Point
         {
@@ -53,24 +53,15 @@ namespace adventofcode2021.Days
             }
         }
 
-        private IList<Line> _lines;
-
-        public Day5()
+        public override void Run()
         {
-            string[] lines = System.IO.File.ReadAllLines(@".\Inputs\day5.txt");
-            _lines = new List<Line>();
+            PrintDayHeader(5);
 
-            foreach(string line in lines)
-            {
-                _lines.Add(Line.Parse(line));
-            }
-        }
+            IList<Line> lines = System.IO.File.ReadAllLines(@".\Inputs\day5.txt").Select(x => Line.Parse(x)).ToList();
 
-        public int GetNumberOfPointsWhereTwoOrMoreLinesIntersectForHorizontalAndVerticalLines()
-        {
-            int[][] currentsMap = CreateFreeCurrentsMap();
+            int[][] currentsMap = CreateFreeCurrentsMap(lines);
 
-            foreach (Line l in _lines)
+            foreach (Line l in lines)
             {
                 if (l.IsHorizontal() || l.IsVertical())
                 {
@@ -79,22 +70,17 @@ namespace adventofcode2021.Days
             }
 
             int numPoints = CountNumberOfIntersectingPoints(currentsMap);
+            PrintPart(1, $"{numPoints}");
 
-            return numPoints;
-        }
-
-        public int GetNumberOfPointsWhereTwoOrMoreLinesIntersect()
-        {
-            int[][] currentsMap = CreateFreeCurrentsMap();
-
-            foreach (Line l in _lines)
+            foreach (Line l in lines)
             {
-                IncreaseValuesForLine(currentsMap, l);
+                if (!l.IsHorizontal() && !l.IsVertical())
+                {
+                    IncreaseValuesForLine(currentsMap, l);
+                }
             }
-
-            int numPoints = CountNumberOfIntersectingPoints(currentsMap);
-
-            return numPoints;
+            numPoints = CountNumberOfIntersectingPoints(currentsMap);
+            PrintPart(2, $"{numPoints}");
         }
 
         private void IncreaseValuesForLine(int[][] currentsMap, Line l)
@@ -127,12 +113,12 @@ namespace adventofcode2021.Days
             return numPoints;
         }
 
-        private int[][] CreateFreeCurrentsMap()
+        private int[][] CreateFreeCurrentsMap(IList<Line> lines)
         {
             int maxX = 0;
             int maxY = 0;
 
-            foreach (Line l in _lines)
+            foreach (Line l in lines)
             {
                 if (maxX < Math.Max(l.Start.X, l.End.X))
                 {

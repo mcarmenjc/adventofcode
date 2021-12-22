@@ -5,45 +5,52 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day15
+    public class Day15 : Day
     {
-        private int[][] _chitonMap;
+        public override void Run()
+        {
+            PrintDayHeader(15);
+            int[][] chitonMap = ParseFile();
 
-        public Day15()
+            int riskLessPath = GetRisklessPath(chitonMap);
+            PrintPart(1, $"{riskLessPath}");
+
+            int riskLessPathForFullMap = GetRiskForSafestPathInFullMap(chitonMap);
+            PrintPart(2, $"{riskLessPathForFullMap}");
+        }
+
+        private static int[][] ParseFile()
         {
             string[] lines = System.IO.File.ReadAllLines(@".\Inputs\day15.txt");
 
-            _chitonMap = new int[lines.Length][];
+            int[][] chitonMap = new int[lines.Length][];
 
             for (int i = 0; i < lines.Length; i++)
             {
-                _chitonMap[i] = lines[i].ToCharArray().Select(x => x - '0').ToArray();
+                chitonMap[i] = lines[i].ToCharArray().Select(x => x - '0').ToArray();
             }
+
+            return chitonMap;
         }
 
-        public int GetRiskForSafestPathInTile()
+        private int GetRiskForSafestPathInFullMap(int[][] chitonMap)
         {
-            return GetRisklessPath(_chitonMap);
-        }
+            int[][] map = new int[chitonMap.Length*5][];
 
-        public int GetRiskForSafestPathInFullMap()
-        {
-            int[][] map = new int[_chitonMap.Length*5][];
-
-            for (int i = 0; i < _chitonMap.Length * 5; i++)
+            for (int i = 0; i < chitonMap.Length * 5; i++)
             {
-                map[i] = new int[_chitonMap[0].Length * 5];
+                map[i] = new int[chitonMap[0].Length * 5];
             }
 
             for (int i = 0; i < 5; i++)
             {
                 for (int j = 0; j < 5; j++)
                 {
-                    for (int k = 0; k < _chitonMap.Length; k++)
+                    for (int k = 0; k < chitonMap.Length; k++)
                     {
-                        for (int l = 0; l < _chitonMap[0].Length; l++)
+                        for (int l = 0; l < chitonMap[0].Length; l++)
                         {
-                            map[i * _chitonMap.Length + k][j * _chitonMap[0].Length + l] = _chitonMap[k][l] + i + j < 10 ? _chitonMap[k][l] + i + j : (_chitonMap[k][l] + i + j) % 10 + 1;
+                            map[i * chitonMap.Length + k][j * chitonMap[0].Length + l] = chitonMap[k][l] + i + j < 10 ? chitonMap[k][l] + i + j : (chitonMap[k][l] + i + j) % 10 + 1;
                         }
                     }
                 }

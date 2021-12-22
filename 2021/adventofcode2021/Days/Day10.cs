@@ -4,18 +4,23 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day10
+    public class Day10 : Day
     {
-        private string[] _navigationSubsystem;
-
-        public Day10()
+        public override void Run()
         {
-            _navigationSubsystem = System.IO.File.ReadAllLines(@".\Inputs\day10.txt");
+            PrintDayHeader(10);
+            string[] navigationSubsystem = System.IO.File.ReadAllLines(@".\Inputs\day10.txt");
+
+            int errorScore = GetSyntaxErrorScore(navigationSubsystem);
+            PrintPart(1, $"{errorScore}");
+
+            long autocompleteScore = GetAutocompleteMiddleScore(navigationSubsystem);
+            PrintPart(2, $"{autocompleteScore}");
         }
 
-        public int GetSyntaxErrorScore()
+        private int GetSyntaxErrorScore(string[] navigationSubsystem)
         {
-            IDictionary<char, int> illegalChars = GetIllegalCharacters();
+            IDictionary<char, int> illegalChars = GetIllegalCharacters(navigationSubsystem);
             IDictionary<char, int> points = new Dictionary<char, int>()
             {
                 { ')', 3 },
@@ -34,15 +39,15 @@ namespace adventofcode2021.Days
             return score;
         }
 
-        public long GetAutocompleteMiddleScore()
+        private long GetAutocompleteMiddleScore(string[] navigationSubsystem)
         {
-            List<long> autocompleteScores = GetAutocompleteScores();
+            List<long> autocompleteScores = GetAutocompleteScores(navigationSubsystem);
             autocompleteScores.Sort();
             int middleScore = autocompleteScores.Count / 2;
             return autocompleteScores[middleScore];
         }
 
-        private List<long> GetAutocompleteScores()
+        private List<long> GetAutocompleteScores(string[] navigationSubsystem)
         {
             List<long> scores = new List<long>();
             IDictionary<char, char> validSegments = new Dictionary<char, char>()
@@ -61,7 +66,7 @@ namespace adventofcode2021.Days
                 { '<', 4 }
             };
 
-            foreach (string line in _navigationSubsystem)
+            foreach (string line in navigationSubsystem)
             {
                 Stack<char> openings = new Stack<char>();
                 bool corruptedLine = false;
@@ -104,7 +109,7 @@ namespace adventofcode2021.Days
             return scores;
         }
 
-        private IDictionary<char, int> GetIllegalCharacters()
+        private IDictionary<char, int> GetIllegalCharacters(string[] navigationSubsystem)
         {
             IDictionary<char, int> illegalCharacters = new Dictionary<char, int>();
             IDictionary<char, char> validSegments = new Dictionary<char, char>()
@@ -115,7 +120,7 @@ namespace adventofcode2021.Days
                 { '>', '<' }
             };
 
-            foreach(string line in _navigationSubsystem)
+            foreach(string line in navigationSubsystem)
             {
                 Stack<char> openings = new Stack<char>();
                 bool corruptedLine = false;

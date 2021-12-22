@@ -4,28 +4,40 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day1
+    public class Day1 : Day
     {
-        private IList<int> _depths = new List<int>();
-
-        public Day1()
+        public override void Run()
         {
-            string[] lines = System.IO.File.ReadAllLines(@".\Inputs\day1.txt");
+            IList<int> depths = ParseFile();
+            PrintDayHeader(1);
 
-            foreach(string line in lines)
-            {
-                int depth = Int32.Parse(line);
-                _depths.Add(depth);
-            }
+            int measurementsIncreases = GetNumberOfTimesMeasurementIncreases(depths);
+            PrintPart(1, $"{measurementsIncreases}");
+            int sumOfSlidingWindow = GetNumberOfTimesSumOfMeasurementsInSlidingWindowIncreases(depths);
+            PrintPart(2, $"{sumOfSlidingWindow}");
         }
 
-        public int GetNumberOfTimesMeasurementIncreases()
+        private IList<int> ParseFile()
+        {
+            string[] lines = System.IO.File.ReadAllLines(@".\Inputs\day1.txt");
+            IList<int> depths = new List<int>();
+
+            foreach (string line in lines)
+            {
+                int depth = Int32.Parse(line);
+                depths.Add(depth);
+            }
+
+            return depths;
+        }
+
+        private int GetNumberOfTimesMeasurementIncreases(IList<int> depths)
         {
             int increases = 0;
             
-            for (int i = 0; i < _depths.Count - 1; i++)
+            for (int i = 0; i < depths.Count - 1; i++)
             {
-                if (_depths[i] < _depths[i + 1])
+                if (depths[i] < depths[i + 1])
                 {
                     increases++;
                 }
@@ -33,21 +45,21 @@ namespace adventofcode2021.Days
             return increases;
         }
 
-        public int GetNumberOfTimesSumOfMeasurementsInSlidingWindowIncreases()
+        private int GetNumberOfTimesSumOfMeasurementsInSlidingWindowIncreases(IList<int> depths)
         {
             int windowSize = 3;
             int increases = 0;
             int currentWindow = 0;
             
-            for (int i = 0; i < _depths.Count; i++)
+            for (int i = 0; i < depths.Count; i++)
             {
                 if (i < windowSize)
                 {
-                    currentWindow += _depths[i];
+                    currentWindow += depths[i];
                 }
                 else
                 {
-                    int nextWindow = currentWindow - _depths[i - windowSize] + _depths[i];
+                    int nextWindow = currentWindow - depths[i - windowSize] + depths[i];
 
                     if (currentWindow < nextWindow)
                     {

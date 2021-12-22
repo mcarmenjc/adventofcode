@@ -4,11 +4,23 @@ using System.Text;
 
 namespace adventofcode2021.Days
 {
-    public class Day12
+    public class Day12 : Day
     {
         private IDictionary<string, IList<string>> _cavesGraph;
 
-        public Day12()
+        public override void Run()
+        {
+            PrintDayHeader(12);
+            ParseFile();
+
+            int pathsToExit = GetPathsToExit("start", new HashSet<string>());
+            PrintPart(1, $"{pathsToExit}");
+
+            int pathsToExitWithRepeatedSmallCave = GetPathsToExit("start", new HashSet<string>(), null, 0, new HashSet<string>(), string.Empty);
+            PrintPart(2, $"{pathsToExitWithRepeatedSmallCave}");
+        }
+
+        private void ParseFile()
         {
             string[] lines = System.IO.File.ReadAllLines(@".\Inputs\day12.txt");
             _cavesGraph = new Dictionary<string, IList<string>>();
@@ -31,17 +43,7 @@ namespace adventofcode2021.Days
                 _cavesGraph[caves[1]].Add(caves[0]);
             }
         }
-
-        public int GetNumPathsToExit()
-        {
-            return GetPathsToExit("start", new HashSet<string>());
-        }
-
-        public int GetNumPathsToExitWithRepeatedSmallCave()
-        {
-            return GetPathsToExit("start", new HashSet<string>(), null, 0, new HashSet<string>(), string.Empty);
-        }
-
+                
         private int GetPathsToExit(string node, HashSet<string> visited)
         {
             if (node == "end")
