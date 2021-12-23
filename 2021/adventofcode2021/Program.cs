@@ -63,6 +63,9 @@ namespace adventofcode2021
 
             Day19 day19 = new Day19();
             day19.Run();
+
+            Day20 day20 = new Day20();
+            day20.Run();
         }
     }
 }
