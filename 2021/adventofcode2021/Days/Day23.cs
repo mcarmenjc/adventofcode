@@ -7,7 +7,7 @@ namespace adventofcode2021.Days
 {
     public class Day23 : Day
     {
-        public class Burrow : IComparable
+        public class Burrow
         {
             public long Energy { get; set; }
             public char[][] Rooms { get; set; }
@@ -301,12 +301,6 @@ namespace adventofcode2021.Days
                 char roomType = (char)('A' + room);
 
                 return ((options.Count == 1 && options[0] == '.') || (options.Count == 2 && options.Contains('.') && options.Contains(roomType)));
-            }
-
-            public int CompareTo(object obj)
-            {
-                Burrow other = obj as Burrow;
-                return (Energy + Remaining).CompareTo(other.Energy + other.Remaining);
             }
         }
 
