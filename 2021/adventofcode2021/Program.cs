@@ -74,7 +74,10 @@ namespace adventofcode2021
             day22.Run();
 
             Day23 day23 = new Day23();
-            day23.Run();
+            //day23.Run();
+
+            Day24 day24 = new Day24();
+            day24.Run();
         }
     }
 }
