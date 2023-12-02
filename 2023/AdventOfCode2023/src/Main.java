@@ -23,6 +23,7 @@ public class Main {
 
             if (dayNum > 24){
                 System.err.println("Day out of range. Please select from 1 to 24.");
+                return;
             }
 
             Day day = GetDay(dayNum);
