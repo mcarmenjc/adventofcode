@@ -61,12 +61,12 @@ Your puzzle answer was 54699.
 public class Day2 implements Day{
     private String inputFile = "day2.txt";
 
-    public void Solve() {
+    public void solve() {
         FileResourceUtils utils = new FileResourceUtils();
         List<String> lines = utils.readAllLines(inputFile);
         ArrayList<ArrayList<HashMap<String, Integer>>> games = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++){
-            games.add(ParseGame(lines.get(i)));
+            games.add(parseGame(lines.get(i)));
         }
 
         HashMap<String, Integer> maxCubesValues = new HashMap<>(){
@@ -77,17 +77,17 @@ public class Day2 implements Day{
             }
         };
 
-        int part1 = GetSumOfValidGames(games, maxCubesValues);
-        long part2 = GetSumOfPowerOfMinCubesPerColor(games);
+        int part1 = getSumOfValidGames(games, maxCubesValues);
+        long part2 = getSumOfPowerOfMinCubesPerColor(games);
 
         System.out.println("Day 2:");
         System.out.println("\t - Part 1 => " + part1);
         System.out.println("\t - Part 2 => " + part2);
     }
 
-    private long GetSumOfPowerOfMinCubesPerColor(ArrayList<ArrayList<HashMap<String, Integer>>> games){
+    private long getSumOfPowerOfMinCubesPerColor(ArrayList<ArrayList<HashMap<String, Integer>>> games){
         long sum = 0;
-        ArrayList<HashMap<String, Integer>> minCubesPerGame = GetMinimumAmountOfCubesForViableGame(games);
+        ArrayList<HashMap<String, Integer>> minCubesPerGame = getMinimumAmountOfCubesForViableGame(games);
 
         for (var cubes : minCubesPerGame){
             long power = 1;
@@ -102,7 +102,7 @@ public class Day2 implements Day{
         return sum;
     }
 
-    private ArrayList<HashMap<String, Integer>> GetMinimumAmountOfCubesForViableGame(ArrayList<ArrayList<HashMap<String, Integer>>> games){
+    private ArrayList<HashMap<String, Integer>> getMinimumAmountOfCubesForViableGame(ArrayList<ArrayList<HashMap<String, Integer>>> games){
         ArrayList<HashMap<String, Integer>> minimumCubesPerGame = new ArrayList<>();
 
         for(var game : games){
@@ -126,11 +126,11 @@ public class Day2 implements Day{
         return minimumCubesPerGame;
     }
 
-    private int GetSumOfValidGames(ArrayList<ArrayList<HashMap<String, Integer>>> games, HashMap<String, Integer> maxCubesValues){
+    private int getSumOfValidGames(ArrayList<ArrayList<HashMap<String, Integer>>> games, HashMap<String, Integer> maxCubesValues){
         int sum = 0;
 
         for (int i = 0; i < games.size(); i++){
-            if (ArePlaysInGameValid(games.get(i), maxCubesValues)){
+            if (arePlaysInGameValid(games.get(i), maxCubesValues)){
                 sum += (i+1);
             }
         }
@@ -138,7 +138,7 @@ public class Day2 implements Day{
         return sum;
     }
 
-    private boolean ArePlaysInGameValid (ArrayList<HashMap<String, Integer>> plays, HashMap<String, Integer> maxCubesValues){
+    private boolean arePlaysInGameValid(ArrayList<HashMap<String, Integer>> plays, HashMap<String, Integer> maxCubesValues){
         for (HashMap<String, Integer> play : plays){
             for (String color : play.keySet()){
                 if (play.get(color) > maxCubesValues.get(color)){
@@ -150,7 +150,7 @@ public class Day2 implements Day{
         return true;
     }
 
-    private ArrayList<HashMap<String, Integer>> ParseGame(String line){
+    private ArrayList<HashMap<String, Integer>> parseGame(String line){
         ArrayList<HashMap<String, Integer>> plays = new ArrayList<>();
         String[] gameParts = line.split(": ");
         String[] playsParts = gameParts[1].split("; ");

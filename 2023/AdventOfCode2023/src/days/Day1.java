@@ -48,14 +48,14 @@ What is the sum of all of the calibration values?
 public class Day1 implements Day {
     private String inputFile = "day1.txt";
 
-    public void Solve(){
+    public void solve(){
         FileResourceUtils utils = new FileResourceUtils();
         List<String>  lines = utils.readAllLines(inputFile);
 
-        List<Integer> callibrationValuesPart1 = GetCallibrationValues(lines);
+        List<Integer> callibrationValuesPart1 = getCallibrationValues(lines);
         int part1 = getSumOfCalibrationValues(callibrationValuesPart1);
 
-        List<Integer> callibrationValuesPart2 = GetCallibrationValuesWithSpelledNumbers(lines);
+        List<Integer> callibrationValuesPart2 = getCallibrationValuesWithSpelledNumbers(lines);
         int part2 = getSumOfCalibrationValues(callibrationValuesPart2);
 
         System.out.println("Day 1:");
@@ -72,7 +72,7 @@ public class Day1 implements Day {
         return sum;
     }
 
-    private List<Integer> GetCallibrationValuesWithSpelledNumbers(List<String> lines){
+    private List<Integer> getCallibrationValuesWithSpelledNumbers(List<String> lines){
         ArrayList<Integer> callibrationValues = new ArrayList<>();
 
         for (String line : lines){
@@ -109,7 +109,7 @@ public class Day1 implements Day {
             }
             else {
                 for (String number : numbers.keySet()){
-                    if (ContainsNumber(ch, it, number)){
+                    if (containsNumber(ch, it, number)){
                         callibrationValue = numbers.get(number);
                         numberFound = true;
                     }
@@ -130,7 +130,7 @@ public class Day1 implements Day {
             }
             else {
                 for (String number : numbers.keySet()){
-                    if (ContainsNumberReversed(ch, it, number)){
+                    if (containsNumberReversed(ch, it, number)){
                         callibrationValue += numbers.get(number);
                         numberFound = true;
                     }
@@ -143,7 +143,7 @@ public class Day1 implements Day {
         return callibrationValue;
     }
 
-    private boolean ContainsNumber(char[] word, int index, String number){
+    private boolean containsNumber(char[] word, int index, String number){
         for (int i = index, j = 0; i < word.length && j < number.length(); i++, j++){
             if (word[i] != number.charAt(j)){
                 return false;
@@ -153,7 +153,7 @@ public class Day1 implements Day {
         return true;
     }
 
-    private boolean ContainsNumberReversed(char[] word, int index, String number){
+    private boolean containsNumberReversed(char[] word, int index, String number){
         for (int i = index, j = number.length() - 1; i >= 0 && j >= 0; i--, j--){
             if (word[i] != number.charAt(j)){
                 return false;
@@ -163,7 +163,7 @@ public class Day1 implements Day {
         return true;
     }
 
-    private List<Integer> GetCallibrationValues(List<String> lines){
+    private List<Integer> getCallibrationValues(List<String> lines){
         ArrayList<Integer> callibrationValues = new ArrayList<>();
 
         for (String line : lines){
