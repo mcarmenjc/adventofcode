@@ -1,6 +1,7 @@
 package adventofcode2023.days;
 
 import adventofcode2023.helpers.FileResourceUtils;
+import adventofcode2023.models.Solution;
 
 import java.util.*;
 
@@ -48,7 +49,7 @@ What is the sum of all of the calibration values?
 public class Day1 implements Day {
     private String inputFile = "day1.txt";
 
-    public void solve(){
+    public Solution solve(){
         FileResourceUtils utils = new FileResourceUtils();
         List<String>  lines = utils.readAllLines(inputFile);
 
@@ -58,9 +59,11 @@ public class Day1 implements Day {
         List<Integer> callibrationValuesPart2 = getCallibrationValuesWithSpelledNumbers(lines);
         int part2 = getSumOfCalibrationValues(callibrationValuesPart2);
 
-        System.out.println("Day 1:");
-        System.out.println("\t - Part 1 => " + part1);
-        System.out.println("\t - Part 2 => " + part2);
+        Solution solution = new Solution();
+        solution.part1 = Integer.toString(part1);
+        solution.part2 = Integer.toString(part2);
+
+        return solution;
     }
 
     private int getSumOfCalibrationValues(List<Integer> callibrationValues){

@@ -2,6 +2,7 @@ package adventofcode2023.days;
 
 import adventofcode2023.helpers.FileResourceUtils;
 import adventofcode2023.models.Scratchcard;
+import adventofcode2023.models.Solution;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ Your puzzle answer was 5920640.
 public class Day4 implements Day{
     private String inputFile = "day4.txt";
 
-    public void solve(){
+    public Solution solve(){
         FileResourceUtils utils = new FileResourceUtils();
         List<String> lines = utils.readAllLines(inputFile);
         ArrayList<Scratchcard> scratchcards = parseScratchcards(lines);
@@ -84,9 +85,11 @@ public class Day4 implements Day{
         int part1 = getSumOfAllPointsInCards(scratchcards);
         int part2 = getSumOfAllScratchcards(scratchcards);
 
-        System.out.println("Day 1:");
-        System.out.println("\t - Part 1 => " + part1);
-        System.out.println("\t - Part 2 => " + part2);
+        Solution solution = new Solution();
+        solution.part1 = Long.toString(part1);
+        solution.part2 = Long.toString(part2);
+
+        return solution;
     }
 
     private ArrayList<Scratchcard> parseScratchcards(List<String> lines){

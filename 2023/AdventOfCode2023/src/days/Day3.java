@@ -1,6 +1,7 @@
 package adventofcode2023.days;
 
 import adventofcode2023.helpers.FileResourceUtils;
+import adventofcode2023.models.Solution;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,16 +70,18 @@ Your puzzle answer was 85010461.
 public class Day3  implements Day{
     private String inputFile = "day3.txt";
 
-    public void solve() {
+    public Solution solve() {
         FileResourceUtils utils = new FileResourceUtils();
         List<String> lines = utils.readAllLines(inputFile);
 
         long part1 = getSumOfAllPartNumbers(lines);
         long part2 = getSumOfAllGearRatios(lines);
 
-        System.out.println("Day 3:");
-        System.out.println("\t - Part 1 => " + part1);
-        System.out.println("\t - Part 2 => " + part2);
+        Solution solution = new Solution();
+        solution.part1 = Long.toString(part1);
+        solution.part2 = Long.toString(part2);
+
+        return solution;
     }
 
     private long getSumOfAllGearRatios(List<String> lines){

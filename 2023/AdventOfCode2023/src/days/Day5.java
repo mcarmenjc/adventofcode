@@ -2,6 +2,7 @@ package adventofcode2023.days;
 
 import adventofcode2023.helpers.FileResourceUtils;
 import adventofcode2023.models.Seed;
+import adventofcode2023.models.Solution;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,7 +129,7 @@ Both parts of this puzzle are complete! They provide two gold stars: **
 public class Day5 implements Day{
     private String inputFile = "day5.txt";
 
-    public void solve(){
+    public Solution solve(){
         FileResourceUtils utils = new FileResourceUtils();
         List<String> lines = utils.readAllLines(inputFile);
 
@@ -140,9 +141,11 @@ public class Day5 implements Day{
         List<Long> minLocations = locationRanges.stream().map(x -> x.get(0)).toList();
         long part2 = getSeedWithLowestLocation(minLocations);
 
-        System.out.println("Day 1:");
-        System.out.println("\t - Part 1 => " + part1);
-        System.out.println("\t - Part 2 => " + part2);
+        Solution solution = new Solution();
+        solution.part1 = Long.toString(part1);
+        solution.part2 = Long.toString(part2);
+
+        return solution;
     }
 
     private ArrayList<ArrayList<Long>> getLocationRanges(List<String> lines){
