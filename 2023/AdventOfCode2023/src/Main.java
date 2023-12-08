@@ -69,6 +69,8 @@ public class Main {
                 return new Day6();
             case 7:
                 return new Day7();
+            case 8:
+                return new Day8();
             default:
                 return null;
         }
